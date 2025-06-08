@@ -1,0 +1,124 @@
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'ADLaM Display', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+.logo{
+    display: flex;
+    align-items: center;
+}
+.logo p{
+    font-size: 30px;
+    margin-top:20px
+}
+/* Reset padding/margin cho list */
+.sidebar-menu {
+    list-style: none;
+    margin-top: 50px;
+    padding: 0;
+}
+
+/* Mỗi item menu */
+.sidebar-menu li {
+    margin-bottom: 25px;  /* khoảng cách giữa các item */
+}
+
+/* Link menu: flex để căn icon và chữ ngang hàng */
+.menu-item a {
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: #333;  /* màu chữ cơ bản */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Icon trong menu */
+.menu-item a img {
+    width: 28px;
+    height: 28px;
+    margin-right: 15px;
+    filter: grayscale(0.3); /* làm icon hơi mờ */
+    transition: filter 0.3s ease;
+}
+
+/* Text trong menu */
+.menu-item a span {
+    margin-top: 0;
+}
+
+/* Hover effect cho link */
+.menu-item a:hover {
+    background-color: #007bff;  /* màu xanh bootstrap */
+    color: white;
+    text-decoration: none;
+}
+
+/* Khi hover, icon sáng hơn */
+.menu-item a:hover img {
+    filter: none;
+}
+
+/* Active menu item (giả sử bạn muốn dùng) */
+.menu-item.active a {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Logo chỉnh lại */
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo p {
+    font-size: 28px;
+    font-weight: 700;
+    color: #007bff;
+    margin: 0;
+}
+.upgrade-btn-container {
+    margin-top: 100px;
+    padding: 0 0 20px 15px; /* padding trái 15px, 0 padding phải để sát mép trái */
+    text-align: lefft; /* căn về trái */
+}
+
+
+.btn-upgrade {
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(255, 126, 95, 0.6);
+    transition: background 0.3s ease, transform 0.2s ease;
+    width: auto;
+    display: inline-block;
+    min-width: 160px;
+}
+
+.btn-upgrade:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(255, 126, 95, 0.6);
+}

@@ -1,0 +1,228 @@
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+a {
+    all: unset; /* Reset gần như toàn bộ CSS về mặc định */
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+    box-shadow: 0 0 0 1000px #fff inset !important;
+    -webkit-text-fill-color: #000 !important;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+.left {
+    height: 100%;
+    margin: 0px;
+    padding: 0;
+    position: relative; /* Quan trọng: làm gốc định vị */
+}
+
+.left img {
+    width: 100%;
+    height: 100%;
+    display: block; /* đảm bảo không có khoảng trắng thừa */
+}
+
+.left_first_prompt{
+    position: absolute;
+    top: 100px;
+    left:40%;
+    z-index: 1;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    font-family: 'ADLaM Display', sans-serif;
+    font-size: 35px;
+}
+.left_second_prompt{
+    position: absolute;
+    top: 500px;
+    z-index: 1;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: 'ADLaM Display', sans-serif;
+    font-size:25px;
+}
+#signUp {
+    position: absolute;
+    top: 600px;
+    left: 20%;
+    z-index: 1;
+    padding: 14px 35px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-family: 'ADLaM Display', sans-serif;
+    font-size: 20px;
+    background: linear-gradient(135deg, #f9c74f, #f9844a);
+    color: #2d2d2d;
+    border: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#signUp::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+        );
+    transform: rotate(25deg);
+    animation: shine 3s infinite;
+    pointer-events: none;
+}
+
+#signUp:hover {
+    background: linear-gradient(135deg, #f9844a, #f9c74f);
+    transform: scale(1.05);
+}
+/*right part*/
+.right{
+    height: 100%;
+    margin: 0px;
+    padding: 0;
+    position: relative; /* Quan trọng: làm gốc định vị */
+}
+.right_first_prompt{
+    position: absolute;
+    color: #BFC15A;
+    padding: 10px;
+    top:50px;
+    left:40%;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: 'ADLaM Display', sans-serif;
+    font-size: 40px;
+}
+.logo_container{
+    position: absolute;
+    top: 55px;
+    display: flex;
+    margin-left: 37%;
+    gap: 42px;
+}
+
+.logo img{
+    width: 35px;
+    height: 35px;
+}
+/*last part*/
+
+.form_container {
+    position: absolute;
+    top: 190px;
+    left: 27%;
+    width: 350px;
+    text-align: center;
+}
+
+.input_group {
+    background-color: #f3f3b0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 2px solid transparent;
+}
+.input_group input{
+    font-family: 'ADLaM Display', sans-serif;
+
+}
+.input_group:focus-within {
+    border-color: #3498db;
+}
+
+.input_group i {
+    margin-right: 10px;
+    color: #000;
+}
+
+.input_group input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    flex: 1;
+}
+
+#forgot_link {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #332248 !important;
+    text-decoration: underline;
+
+}
+
+.signIn-btn {
+    z-index: 1;
+    padding: 14px 35px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-family: 'ADLaM Display', sans-serif;
+    font-size: 20px;
+    background: linear-gradient(135deg, #f9c74f, #f9844a);
+    color: #2d2d2d;
+    border: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    width: 200px;
+}
+
+.signIn-btn:hover {
+    background: linear-gradient(135deg, #f9844a, #f9c74f);
+    transform: scale(1.05);
+}
+/*Fish tank*/
+.aquarium {
+    width: 600px;
+    height: 300px;
+    background-color: #3399ff;
+    border: 10px solid #0066cc;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    margin: 50px auto;
+}
+
+.fish {
+    width: 60px;
+    height: 30px;
+    background-color: orange;
+    border-radius: 50% 50% 50% 50%;
+    position: absolute;
+    top: 100px;
+    left: -60px;
+    animation: swim 8s linear infinite;
+}
+.input_icon{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+.input_group input::placeholder {
+    color: black;
+    opacity: 1;
+}
