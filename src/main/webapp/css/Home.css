@@ -1,86 +1,44 @@
-body {
-    height: 100%;
+:root {
+    --primary-text: #4B3B60;
+    --secondary-text: #9D80BE;
+    --highlight-text: #7F55B1;
+    --calendar-header-text: #ffffff;
+    --calendar-normal-text: #4B3B60;
+    --calendar-hover-bg: #E4A4AF;
+    --calendar-completed-bg: #7F55B1;
+    --calendar-today-bg: #E4A4AF;
+
+    --deep-purple: #7F55B1;
+    --soft-purple: #9D80BE;
+    --soft-pink: #E4A4AF;
+    --pale-pink: #FCECEC;
+}
+
+html, body {
     margin: 0;
     padding: 0;
+    height: 100vh;
     font-family: 'ADLaM Display', sans-serif;
+    color: var(--primary-text);
+    background-color: var(--pale-pink);
+    overflow: hidden;
 }
 
 a {
     text-decoration: none;
-    color: black;
+    color: var(--primary-text);
     cursor: pointer;
 }
-.logo{
-    display: flex;
-    align-items: center;
-}
-.logo p{
-    font-size: 30px;
-    margin-top:20px
-}
-/* Reset padding/margin cho list */
-.sidebar-menu {
-    list-style: none;
-    margin-top: 50px;
-    padding: 0;
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--highlight-text);
 }
 
-/* Mỗi item menu */
-.sidebar-menu li {
-    margin-bottom: 25px;  /* khoảng cách giữa các item */
-}
-
-/* Link menu: flex để căn icon và chữ ngang hàng */
-.menu-item a {
-    display: flex;
-    align-items: center;
-    text-decoration: none !important;
-    padding: 10px 15px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    color: #333;  /* màu chữ cơ bản */
-    font-size: 18px;
-    font-weight: 500;
-}
-
-/* Icon trong menu */
-.menu-item a img {
-    width: 28px;
-    height: 28px;
-    margin-right: 15px;
-    filter: grayscale(0.3); /* làm icon hơi mờ */
-    transition: filter 0.3s ease;
-}
-
-/* Text trong menu */
-.menu-item a span {
-    margin-top: 0;
-}
-
-/* Hover effect cho link */
-.menu-item a:hover {
-    background-color: #007bff;  /* màu xanh bootstrap */
-    color: white;
-    text-decoration: none;
-}
-
-/* Khi hover, icon sáng hơn */
-.menu-item a:hover img {
-    filter: none;
-}
-
-/* Active menu item (giả sử bạn muốn dùng) */
-.menu-item.active a {
-    background-color: #0056b3;
-    color: white;
-}
-
-/* Logo chỉnh lại */
 .logo {
     display: flex;
     align-items: center;
     padding: 20px 15px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--soft-pink);
 }
 
 .logo img {
@@ -92,18 +50,55 @@ a {
 .logo p {
     font-size: 28px;
     font-weight: 700;
-    color: #007bff;
+    color: var(--soft-purple);
     margin: 0;
 }
-.upgrade-btn-container {
-    margin-top: 100px;
-    padding: 0 0 20px 15px; /* padding trái 15px, 0 padding phải để sát mép trái */
-    text-align: lefft; /* căn về trái */
+
+.sidebar-menu {
+    list-style: none;
+    margin-top: 50px;
+    padding: 0;
 }
 
+.sidebar-menu li {
+    margin-bottom: 25px;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    color: var(--primary-text);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.menu-item a img {
+    width: 28px;
+    height: 28px;
+    margin-right: 15px;
+    filter: grayscale(0.3);
+    transition: filter 0.3s ease;
+}
+
+.menu-item a:hover {
+    background-color: var(--deep-purple);
+    color: white;
+}
+
+.menu-item a:hover img {
+    filter: none;
+}
+
+.upgrade-btn-container {
+    margin-top: 100px;
+    padding-left: 15px;
+}
 
 .btn-upgrade {
-    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    background: linear-gradient(90deg, var(--deep-purple), var(--soft-purple));
     border: none;
     color: white;
     font-weight: 700;
@@ -111,14 +106,223 @@ a {
     padding: 8px 20px;
     border-radius: 20px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(255, 126, 95, 0.6);
-    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(127, 85, 177, 0.4);
     width: auto;
-    display: inline-block;
     min-width: 160px;
 }
 
-.btn-upgrade:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 8px rgba(255, 126, 95, 0.6);
+.col-md-5 {
+    max-height: 100vh;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.calendar th {
+    background: linear-gradient(90deg, var(--deep-purple), var(--soft-purple));
+    color: var(--calendar-header-text);
+    padding: 12px;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.calendar td {
+    text-align: center;
+    padding: 12px;
+    font-size: 15px;
+    background-color: var(--pale-pink);
+    color: var(--calendar-normal-text);
+    border: 1px solid var(--soft-pink);
+    transition: 0.2s ease-in-out;
+}
+
+.calendar td:hover {
+    background-color: var(--calendar-hover-bg);
+    cursor: pointer;
+    transform: scale(1.05);
+    font-weight: bold;
+}
+
+.calendar td.submitted {
+    background-color: var(--calendar-completed-bg);
+    color: white;
+    border-radius: 50%;
+}
+
+.calendar td.today {
+    background-color: var(--calendar-today-bg);
+    font-weight: bold;
+    border-radius: 50%;
+}
+
+.dedication_chart h4,
+.test_history h4,
+h2 {
+    font-weight: 900;
+    color: var(--highlight-text);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+.dedication_chart h5 {
+    font-weight: 700;
+    font-size: 18px;
+    background: linear-gradient(90deg, var(--soft-pink), var(--pale-pink));
+    padding: 6px 16px;
+    border-radius: 10px;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.test_history {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.test_history table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--pale-pink);
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(127, 85, 177, 0.1);
+    margin-top: 10px;
+    table-layout: fixed;
+}
+
+.test_history thead {
+    background: linear-gradient(90deg, var(--deep-purple), var(--soft-purple));
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.test_history th,
+.test_history td {
+    padding: 8px 10px;
+    font-size: 13.5px;
+    text-align: center;
+}
+
+.test_history tbody td {
+    color: var(--primary-text);
+    font-weight: bold;
+    border-bottom: 1px solid var(--soft-pink);
+}
+
+.test_history tbody tr:hover {
+    background-color: var(--soft-pink);
+    cursor: pointer;
+}
+
+.test_history tbody td:last-child {
+    padding: 0;
+}
+
+.test_history tbody td:last-child::before {
+    content: attr(data-score);
+    display: inline-block;
+    padding: 4px 12px;
+    margin: 4px 0;
+    font-size: 13px;
+    background: linear-gradient(135deg, var(--soft-purple), var(--soft-pink));
+    border-radius: 20px;
+    color: white;
+}
+
+.goal-box {
+    padding: 20px;
+    text-align: center;
+}
+
+.set-goal-btn-container {
+    margin-top: 30px;
+}
+
+.btn-set-goal {
+    background: linear-gradient(90deg, var(--soft-purple), var(--soft-pink));
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 192, 203, 0.3);
+}
+
+.btn-set-goal:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, var(--soft-pink), var(--soft-purple));
+}
+
+.goals-section h4 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--highlight-text);
+}
+
+.goal-cards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.goal-card {
+    text-align: center;
+    padding: 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    background: var(--pale-pink);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    width: 90px;
+    color: var(--primary-text);
+}
+
+.goal-card span {
+    display: block;
+    font-size: 22px;
+    margin-top: 4px;
+    color: var(--deep-purple);
+}
+
+.goal-card.overall {
+    background: linear-gradient(180deg, var(--soft-pink), var(--soft-purple));
+    color: white;
+}
+
+.outcome-summary {
+    margin-top: 30px;
+}
+/* ==== SAKURA EFFECT ==== */
+.sakura {
+    position: fixed;
+    top: -50px;
+    width: 20px;
+    height: 20px;
+    background-image: url('../Sources/HomeSource/cherryblossom.png'); /* ảnh bạn để trong project */
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
 }

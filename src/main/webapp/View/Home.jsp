@@ -1,95 +1,232 @@
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- THÊM DÒNG NÀY -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Admin Dashboard</title>
-
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Home.css">
         <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet" />
     </head>
+    <script>
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.classList.add('sakura');
+
+            sakura.style.left = Math.random() * 100 + "vw";
+            sakura.style.animationDuration = (Math.random() * 5 + 5) + "s";
+            sakura.style.opacity = Math.random();
+            sakura.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            document.body.appendChild(sakura);
+
+            setTimeout(() => {
+                sakura.remove();
+            }, 10000);
+        }
+
+        setInterval(createSakura, 1000);
+    </script>
     <body>
         <div class="container-fluid home_container">
             <div class="web_page row">
                 <div class="col-md-3">
                     <div class="logo">
-                        <img src="../Sources/HomeSource/cloud.png" alt="logo"/>
+                        <img src="${pageContext.request.contextPath}/Sources/HomeSource/cloud.png" alt="logo"/>
                         <p>IELTSPhobic</p>
                     </div>
-                    <div>
-                        <ul class="sidebar-menu">
+                    <ul class="sidebar-menu">
+                        <li class="menu-item">
+                            <a href="overview.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/overview.png" alt="">
+                                <span>Overview</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="reading.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading1.png" alt="">
+                                <span>Reading</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="listening.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone1.png" alt="">
+                                <span>Listening</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="reading-full.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading2.png" alt="">
+                                <span>Reading (Full Test)</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="listening-full.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone2.png" alt="">
+                                <span>Listening (Full Test)</span>
+                            </a>
+                        </li>
+                        <c:if test="${sessionScope.role eq 'admin'}">
                             <li class="menu-item">
-                                <a href="overview.html">
-                                    <img src="../Sources/HomeSource/overview.png" alt="Chart Icon">
-                                    <span>Overview</span>
+                                <a href="${pageContext.request.contextPath}/AddSources/admin.jsp">
+                                    <span>➕ Add Test</span>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a href="reading.html">
-                                    <img src="../Sources/HomeSource/reading1.png" alt="Book Icon">
-                                    <span>Reading</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="listening.html">
-                                    <img src="../Sources/HomeSource/headphone1.png" alt="Headphone Icon">
-                                    <span>Listening</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="reading-full.html">
-                                    <img src="../Sources/HomeSource/reading2.png" alt="Open Book Icon">
-                                    <span>Reading (Full Test)</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="listening-full.html">
-                                    <img src="../Sources/HomeSource/headphone2.png" alt="Headphone Icon">
-                                    <span>Listening (Full Test)</span>
-                                </a>
-                            </li>
-
-                            <c:if test="${sessionScope.role eq 'admin'}">
-                                <li class="menu-item">
-                                    <a href="./AddSources/admin.jsp">
-                                        <span>➕ Add  Test</span>
-                                    </a>
-                                </li>
-
-                            </c:if>
-
-                            <li class="menu-item">
-                                <a href="settings.html">
-                                    <img src="../Sources/HomeSource/setting.png" alt="Gear Icon">
-                                    <span>Settings</span>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <div class="upgrade-btn-container">
-                            <button class="btn-upgrade">Upgrade to Premium</button>
-                        </div>
+                        </c:if>
+                        <li class="menu-item">
+                            <a href="settings.html">
+                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/setting.png" alt="">
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="upgrade-btn-container">
+                        <button class="btn-upgrade">Upgrade to Premium</button>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div>
-                        <h2>Summary of your hard work</h2>
-                    </div>
+                <div class="col-md-5">
+                    <h2>Summary of your hard work</h2>
                     <div class="dedication_chart">
                         <h4>Your Dedication Chart</h4>
+                        <%
+                            java.time.LocalDate today = java.time.LocalDate.now();
+                            java.time.YearMonth month = java.time.YearMonth.now();
+                            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("'Month:' MMMM / yyyy");
+                            String monthHeader = today.format(formatter);
+                        %>
+                        <h5 style="margin-bottom: 15px; font-weight: bold;"><%= monthHeader%></h5>
+
+                        <table class="calendar table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    java.time.LocalDate firstDay = month.atDay(1);
+                                    int length = month.lengthOfMonth();
+                                    int dayOfWeekValue = firstDay.getDayOfWeek().getValue(); // Mon = 1, Sun = 7
+                                    int currentDay = 1;
+                                    List<java.time.LocalDate> completedDates = (List<java.time.LocalDate>) request.getAttribute("completedDates");
+
+                                    outer:
+                                    for (int row = 0; row < 6; row++) {
+                                        out.println("<tr>");
+                                        for (int col = 1; col <= 7; col++) {
+                                            if (row == 0 && col < dayOfWeekValue) {
+                                                out.println("<td></td>");
+                                            } else if (currentDay > length) {
+                                                out.println("<td></td>");
+                                            } else {
+                                                java.time.LocalDate date = java.time.LocalDate.of(month.getYear(), month.getMonthValue(), currentDay);
+                                                boolean submitted = completedDates != null && completedDates.contains(date);
+                                                if (submitted) {
+                                                    out.println("<td style='background-color: #e0f7e9; color: #2e7d32; font-weight: bold; position: relative;'>"
+                                                            + currentDay
+                                                            + "<span style='position: absolute; top: 2px; right: 4px; font-size: 14px; color: #2e7d32;'>✔</span>"
+                                                            + "</td>");
+                                                } else {
+                                                    out.println("<td>" + currentDay + "</td>");
+                                                }
+                                                currentDay++;
+                                            }
+                                        }
+                                        out.println("</tr>");
+                                        if (currentDay > length) {
+                                            break outer;
+                                        }
+                                    }
+                                %>
+                            </tbody>
+                        </table>
                     </div>
+
                     <div class="test_history">
                         <h4>Practice History</h4>
+                        <c:if test="${not empty historyList}">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr><th>Date</th><th>Exam</th><th>Score</th></tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="item" items="${historyList}">
+                                        <tr>
+                                            <td>${item.completedAt}</td>
+                                            <td>${item.title}</td>
+                                            <td data-score="${item.score}"></td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:if>
+
                     </div>
                 </div>
-                <div class="col-md-5"> Third part
+
+                <div class="col-md-4 goal-box">
                     <p>Role: ${sessionScope.role}</p>
+
+                    <c:choose>
+                        <c:when test="${empty goal}">
+                            <div class="set-goal-btn-container">
+                                <button class="btn-set-goal">🎯 Set Your Goal</button>
+                            </div>
+                        </c:when>
+
+                        <c:otherwise>
+                            <div class="goals-section">
+                                <h4>Goals 🎯</h4>
+                                <div class="goal-cards">
+                                    <div class="goal-card">Reading<br><span>${goal.reading}</span></div>
+                                    <div class="goal-card">Listening<br><span>${goal.listening}</span></div>
+                                    <div class="goal-card overall">Overall<br><span>${goal.overall}</span></div>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                    <div class="outcome-summary mt-4">
+                        <h4>Your Performance Outcome 📊</h4>
+                        <c:if test="${not empty outcome}">
+                            <div style="font-size: 14px; color: gray;">
+                                Entries in outcome: ${fn:length(outcome)}
+                            </div>
+                        </c:if>
+
+
+                        <c:if test="${not empty outcome}">
+                            <div class="goal-cards">
+                                <c:forEach var="entry" items="${outcome}">
+                                    <div class="goal-card">
+                                        ${entry.key}<br>
+                                        <span><fmt:formatNumber value="${entry.value}" minFractionDigits="1" maxFractionDigits="1"/></span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+                        <div class="goal-card">
+                            ${entry.key}<br>
+                            <span>
+                                Value: ${entry.value} <br/>
+                                Type: ${entry.value.getClass().getName()}
+                            </span>
+                        </div>
+
+                    </div>
+
+
                 </div>
+
+
+
+
             </div>
         </div>
     </body>
 </html>
+

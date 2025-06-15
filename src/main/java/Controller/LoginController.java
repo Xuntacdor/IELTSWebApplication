@@ -6,7 +6,6 @@ package Controller;
 
 import Utils.UserDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,7 +37,7 @@ public class LoginController extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
             session.setAttribute("role", user.getRole()); 
-            resp.sendRedirect("View/Home.jsp");
+            resp.sendRedirect("HomeServlet");
         } else {
             req.setAttribute("error", "Wrong user name or password!");
             req.getRequestDispatcher("View/Login.jsp").forward(req, resp);
