@@ -1,12 +1,11 @@
 package dao;
 
-import Model.PracticeHistoryItem;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import Utils.DBUtils;
-import Model.PracticeHistoryItem;
+import util.DBConnection;
+import model.PracticeHistoryItem;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class UserProgressDAO {
         List<LocalDate> dates = new ArrayList<>();
         String sql = "SELECT completed_at FROM UserProgress WHERE user_id = ? AND completed_at IS NOT NULL";
 
-        try (Connection conn = DBUtils.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -41,7 +40,7 @@ public class UserProgressDAO {
                 + "WHERE up.user_id = ? AND up.completed_at IS NOT NULL "
                 + "ORDER BY up.completed_at DESC";
 
-        try (Connection conn = DBUtils.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -62,9 +61,8 @@ public class UserProgressDAO {
 
     public static Map<String, Float> getAverageScoreByType(int userId) {
         Map<String, Float> result = new HashMap<>();
-        try (Connection conn = DBUtils.getConnection()) {
-            String sql
-                    = "SELECT type, AVG(score) "
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "SELECT type, AVG(score) AS avg_score "
                     + "FROM UserProgress "
                     + "WHERE user_id = ? "
                     + "GROUP BY type";
@@ -74,7 +72,7 @@ public class UserProgressDAO {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         String type = rs.getString("type"); // e.g. "Reading", "Listening"
-                        float score = rs.getFloat("avg_score");
+                        float score = rs.getFloat("avg_score"); // alias phải đúng
                         if (!rs.wasNull()) {
                             result.put(type, score);
                         }

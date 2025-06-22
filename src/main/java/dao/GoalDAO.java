@@ -1,8 +1,8 @@
 
 package dao;
 
-import Model.Goal;
-import Utils.DBUtils;
+import model.Goal;
+import util.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ public class GoalDAO {
 
     public static Goal getGoalByUserId(int userId) {
         Goal goal = null;
-        try (Connection conn = DBUtils.getConnection();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                  "SELECT goal_reading, goal_listening, goal_overall FROM UserGoals WHERE user_id = ?")) {
             stmt.setInt(1, userId);

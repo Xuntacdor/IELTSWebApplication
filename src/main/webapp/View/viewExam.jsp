@@ -1,7 +1,5 @@
-<%@page import="java.util.List"%>
-<%@page import="dao.ExamDAO"%>
-<%@page import="Model.Exam"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, model.Exam, dao.ExamDAO" %>
 <html>
 <head>
     <title>📚 Danh sách đề thi IELTS</title>

@@ -41,7 +41,7 @@
                     </div>
                     <ul class="sidebar-menu">
                         <li class="menu-item">
-                            <a href="overview.html">
+                            <a href="${pageContext.request.contextPath}/HomeServlet">
                                 <img src="${pageContext.request.contextPath}/Sources/HomeSource/overview.png" alt="">
                                 <span>Overview</span>
                             </a>
@@ -72,7 +72,7 @@
                         </li>
                         <c:if test="${sessionScope.role eq 'admin'}">
                             <li class="menu-item">
-                                <a href="${pageContext.request.contextPath}/AddSources/admin.jsp">
+                                <a href="${pageContext.request.contextPath}/View/admin.jsp">
                                     <span>➕ Add Test</span>
                                 </a>
                             </li>
@@ -219,12 +219,7 @@
 
                     </div>
 
-
                 </div>
-
-
-
-
             </div>
         </div>
     </body>

@@ -1,14 +1,7 @@
-package Controller;
+package controller;
 
-import dao.AnswerDAO;
-import dao.ExamDAO;
-import dao.PassageDAO;
-import dao.QuestionDAO;
-import Model.Answer;
-import Model.Exam;
-import Model.Passage;
-import Model.Question;
-
+import dao.*;
+import model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,16 +13,17 @@ import java.sql.Timestamp;
 
 @WebServlet(name = "AddListeningTestServlet", urlPatterns = {"/AddListeningTestServlet"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,
-    maxFileSize = 50 * 1024 * 1024,
-    maxRequestSize = 100 * 1024 * 1024
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 50 * 1024 * 1024,
+        maxRequestSize = 100 * 1024 * 1024
 )
-public class AddListeningTestServlet extends HttpServlet {
+public class AddListeningTestController extends HttpServlet {
 
     private final ExamDAO examDAO = new ExamDAO();
     private final PassageDAO passageDAO = new PassageDAO();
     private final QuestionDAO questionDAO = new QuestionDAO();
     private final AnswerDAO answerDAO = new AnswerDAO();
+    private final OptionDAO optionDAO = new OptionDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +45,9 @@ public class AddListeningTestServlet extends HttpServlet {
             String fileName = System.currentTimeMillis() + "_" + audioPart.getSubmittedFileName();
             String uploadPath = getServletContext().getRealPath("/uploads/audio");
             File dir = new File(uploadPath);
-            if (!dir.exists()) dir.mkdirs();
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
             audioPart.write(uploadPath + File.separator + fileName);
             audioUrl = "uploads/audio/" + fileName;
         }
@@ -67,7 +63,9 @@ public class AddListeningTestServlet extends HttpServlet {
         for (int s = 1;; s++) {
             String sectionTitle = request.getParameter("sectionTitle" + s);
             String sectionContent = request.getParameter("sectionContent" + s);
-            if (sectionTitle == null && sectionContent == null) break;
+            if (sectionTitle == null && sectionContent == null) {
+                break;
+            }
 
             Passage passage = new Passage();
             passage.setTitle(sectionTitle);
@@ -79,9 +77,10 @@ public class AddListeningTestServlet extends HttpServlet {
             int passageId = passageDAO.insertPassage(passage);
 
             for (int q = 1;; q++) {
-                String prefix = "type_s" + s + "_q" + q;
-                String questionType = request.getParameter(prefix);
-                if (questionType == null) break;
+                String questionType = request.getParameter("type_s" + s + "_q" + q);
+                if (questionType == null) {
+                    break;
+                }
 
                 String instruction = request.getParameter("instruction_s" + s + "_q" + q);
                 Part imagePart = request.getPart("image_s" + s + "_q" + q);
@@ -92,7 +91,9 @@ public class AddListeningTestServlet extends HttpServlet {
                     String fileName = "listen_s" + s + "_q" + q + "_" + System.currentTimeMillis() + "_" + rawName.replaceAll("\\s+", "_");
                     String uploadPath = getServletContext().getRealPath("/uploads");
                     File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) uploadDir.mkdirs();
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
                     imagePart.write(uploadPath + File.separator + fileName);
                     imageUrl = "uploads/" + fileName;
                 }
@@ -102,13 +103,14 @@ public class AddListeningTestServlet extends HttpServlet {
                 for (int i = 0;; i++) {
                     String questionText = request.getParameter("questionText_s" + s + "_q" + q + "_i" + i);
                     String answerText = request.getParameter("answers_s" + s + "_q" + q + "_i" + i);
+                    String isCorrectParam = request.getParameter("isCorrect_s" + s + "_q" + q + "_i" + i);
 
-                    if (questionText == null && answerText == null) break;
+                    if (questionText == null && answerText == null) {
+                        break;
+                    }
 
-                    boolean shouldCreateQuestion = questionId == -1 && (
-                            (questionText != null && !questionText.trim().isEmpty()) ||
-                            (!imageUrl.isEmpty() && answerText != null && !answerText.trim().isEmpty())
-                    );
+                    boolean shouldCreateQuestion = questionId == -1 && ((questionText != null && !questionText.trim().isEmpty())
+                            || (!imageUrl.isEmpty() && answerText != null && !answerText.trim().isEmpty()));
 
                     if (shouldCreateQuestion) {
                         Question question = new Question();
@@ -123,10 +125,19 @@ public class AddListeningTestServlet extends HttpServlet {
                     }
 
                     if (questionId != -1 && answerText != null && !answerText.trim().isEmpty()) {
-                        Answer answer = new Answer();
-                        answer.setQuestionId(questionId);
-                        answer.setAnswerText(answerText.trim());
-                        answerDAO.insertAnswer(answer);
+                        if ("MULTIPLE_CHOICE".equals(questionType)) {
+                            Option option = new Option();
+                            option.setQuestionId(questionId);
+                            option.setOptionLabel(String.valueOf((char) ('A' + i))); // A, B, C...
+                            option.setOptionText(answerText.trim());
+                            option.setIsCorrect(isCorrectParam != null);
+                            optionDAO.insertOption(option);
+                        } else {
+                            Answer answer = new Answer();
+                            answer.setQuestionId(questionId);
+                            answer.setAnswerText(answerText.trim());
+                            answerDAO.insertAnswer(answer);
+                        }
                     }
                 }
             }

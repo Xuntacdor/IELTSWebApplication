@@ -1,9 +1,9 @@
-package Controller;
+package controller;
 
 import dao.AnswerDAO;
 import dao.QuestionDAO;
-import Model.Answer;
-import Model.Question;
+import model.Answer;
+import model.Question;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 @WebServlet(name = "AddQAServlet", urlPatterns = {"/AddQA"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024)
-public class AddQAServlet extends HttpServlet {
+public class AddQAController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

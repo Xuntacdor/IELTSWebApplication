@@ -1,7 +1,7 @@
 package dao;
 
-import Model.Passage;
-import Utils.DBUtils;
+import model.Passage;
+import util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,21 +10,21 @@ import java.util.List;
 public class PassageDAO {
 
     public int insertPassage(Passage passage) {
-        String sql = "INSERT INTO Passages (exam_id, title, content, audio_url, type, created_at) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO Passages (title, content, audio_url, type, created_at, exam_id) VALUES (?, ?, ?, ?, ?, ?)";
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setInt(1, passage.getExamId());
-            stmt.setString(2, passage.getTitle());
-            stmt.setString(3, passage.getContent());
-            stmt.setString(4, passage.getAudioUrl());
-            stmt.setString(5, passage.getType());
-            stmt.setTimestamp(6, passage.getCreatedAt());
+            stmt.setString(1, passage.getTitle());
+            stmt.setString(2, passage.getContent());
+            stmt.setString(3, passage.getAudioUrl());
+            stmt.setString(4, passage.getType());
+            stmt.setTimestamp(5, passage.getCreatedAt());
+            stmt.setInt(6, passage.getExamId());
 
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
-
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -34,9 +34,7 @@ public class PassageDAO {
     public List<Passage> getPassagesByExamId(int examId) {
         List<Passage> list = new ArrayList<>();
         String sql = "SELECT * FROM Passages WHERE exam_id = ?";
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, examId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -50,10 +48,10 @@ public class PassageDAO {
                 p.setCreatedAt(rs.getTimestamp("created_at"));
                 list.add(p);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
+
 }

@@ -1,13 +1,14 @@
-package Utils;
+package dao;
 
-import Model.User;
+import model.User;
 import java.sql.*;
+import util.DBConnection;
 
 public class UserDAO {
 
     public static User checkLogin(String email, String password) {
         String sql = "SELECT * FROM Users WHERE email = ? AND password_hash = ?";
-        try (Connection conn = DBUtils.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
             stmt.setString(2, password);
@@ -32,7 +33,7 @@ public class UserDAO {
     }
     public static void insertUser(String fullName, String email, String password, String gender, String dob){
         String sql = "INSERT INTO Users (full_name, email, password_hash, gender, date_of_birth) VALUES (?, ?, ?, ?, ?)";
-        try (Connection con = DBUtils.getConnection()){
+        try (Connection con = DBConnection.getConnection()){
             PreparedStatement stm = con.prepareStatement(sql);
             stm.setString(1, fullName);
             stm.setString(2, email);

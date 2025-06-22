@@ -1,8 +1,8 @@
-package Controller;
+package controller;
 
-import Model.PracticeHistoryItem;
-import Model.User;
-import Model.Goal;
+import model.PracticeHistoryItem;
+import model.User;
+import model.Goal;
 import dao.GoalDAO;
 import dao.UserProgressDAO;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet"})
-public class HomeServlet extends HttpServlet {
+public class HomeController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
