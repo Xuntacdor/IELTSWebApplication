@@ -5,7 +5,9 @@ import util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AnswerDAO {
 
@@ -80,6 +82,26 @@ public class AnswerDAO {
 
         return list;
     }
+    
+    public Map<Integer, List<Answer>> getAllAnswersGroupedByQuestion() {
+    Map<Integer, List<Answer>> map = new HashMap<>();
+    String sql = "SELECT * FROM Answers";
+    try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int qId = rs.getInt("question_id");
+            Answer a = new Answer();
+            a.setAnswerId(rs.getInt("answer_id"));
+            a.setQuestionId(qId);
+            a.setAnswerText(rs.getString("answer_text"));
+            map.computeIfAbsent(qId, k -> new ArrayList<>()).add(a);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return map;
+}
+
 
     // ✅ Thêm hàm test vào cuối class
     public static void main(String[] args) {

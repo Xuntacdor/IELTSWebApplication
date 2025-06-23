@@ -2,6 +2,8 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,43 +49,31 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="reading.html">
+                            <a href="${pageContext.request.contextPath}/exam-list?type=READING">
                                 <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading1.png" alt="">
                                 <span>Reading</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="listening.html">
+                            <a href="${pageContext.request.contextPath}/exam-list?type=LISTENING">
                                 <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone1.png" alt="">
                                 <span>Listening</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="reading-full.html">
+                            <a href="${pageContext.request.contextPath}/exam-list?type=READING_FULL">
                                 <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading2.png" alt="">
                                 <span>Reading (Full Test)</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="listening-full.html">
+                            <a href="${pageContext.request.contextPath}/exam-list?type=LISTENING_FULL">
                                 <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone2.png" alt="">
                                 <span>Listening (Full Test)</span>
                             </a>
                         </li>
-                        <c:if test="${sessionScope.role eq 'admin'}">
-                            <li class="menu-item">
-                                <a href="${pageContext.request.contextPath}/View/admin.jsp">
-                                    <span>➕ Add Test</span>
-                                </a>
-                            </li>
-                        </c:if>
-                        <li class="menu-item">
-                            <a href="settings.html">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/setting.png" alt="">
-                                <span>Settings</span>
-                            </a>
-                        </li>
                     </ul>
+
                     <div class="upgrade-btn-container">
                         <button class="btn-upgrade">Upgrade to Premium</button>
                     </div>

@@ -11,7 +11,7 @@
     </session-config>
 
     <welcome-file-list>
-        <welcome-file>View/Login.jsp</welcome-file>  <!-- vẫn là login mặc định -->
+        <welcome-file>View/Home.jsp</welcome-file>  <!-- vẫn là login mặc định -->
     </welcome-file-list>
 
 

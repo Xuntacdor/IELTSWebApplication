@@ -2,7 +2,9 @@ package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Option;
 import util.DBConnection;
 
@@ -12,7 +14,7 @@ public class OptionDAO {
     private final String SELECT_BY_QUESTION = "SELECT * FROM Options WHERE question_id = ?";
 
     public void insertOption(Option option) {
-        try ( Connection con = DBConnection.getConnection();  PreparedStatement ps = con.prepareStatement(INSERT_SQL)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(INSERT_SQL)) {
             ps.setInt(1, option.getQuestionId());
             ps.setString(2, option.getOptionLabel());
             ps.setString(3, option.getOptionText());
@@ -25,7 +27,7 @@ public class OptionDAO {
 
     public List<Option> getOptionsByQuestionId(int questionId) {
         List<Option> list = new ArrayList<>();
-        try ( Connection con = DBConnection.getConnection();  PreparedStatement ps = con.prepareStatement(SELECT_BY_QUESTION)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(SELECT_BY_QUESTION)) {
             ps.setInt(1, questionId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -46,7 +48,7 @@ public class OptionDAO {
     public List<Option> getCorrectOptionsByQuestionId(int questionId) {
         List<Option> list = new ArrayList<>();
         String sql = "SELECT * FROM Options WHERE question_id = ? AND is_correct = 1";
-        try ( Connection con = DBConnection.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -62,6 +64,29 @@ public class OptionDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public Map<Integer, List<Option>> getAllOptionsGroupedByQuestion() {
+        Map<Integer, List<Option>> map = new HashMap<>();
+        String sql = "SELECT * FROM Options";
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int qId = rs.getInt("question_id");
+                Option o = new Option();
+                o.setOptionId(rs.getInt("option_id"));
+                o.setQuestionId(qId);
+                o.setOptionLabel(rs.getString("option_label"));
+                o.setOptionText(rs.getString("option_text"));
+                o.setIsCorrect(rs.getBoolean("is_correct"));
+
+                // gom nhóm theo question_id
+                map.computeIfAbsent(qId, k -> new ArrayList<>()).add(o);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
 }

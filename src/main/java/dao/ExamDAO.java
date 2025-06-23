@@ -110,4 +110,25 @@ public class ExamDAO {
             }
         }
     }
+
+    public List<Exam> getExamsByType(String type) {
+        List<Exam> list = new ArrayList<>();
+        String sql = "SELECT * FROM Exams WHERE type = ? ORDER BY created_at DESC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, type);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Exam e = new Exam();
+                e.setExamId(rs.getInt("exam_id"));
+                e.setTitle(rs.getString("title"));
+                e.setType(rs.getString("type"));
+                e.setCreatedAt(rs.getTimestamp("created_at"));
+                list.add(e);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
