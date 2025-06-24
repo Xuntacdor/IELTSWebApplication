@@ -1,9 +1,8 @@
-<%@page import="java.util.List"%>
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,74 +10,21 @@
         <meta charset="UTF-8" />
         <title>Admin Dashboard</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Home.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Home.css" />
         <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet" />
     </head>
-    <script>
-        function createSakura() {
-            const sakura = document.createElement('div');
-            sakura.classList.add('sakura');
 
-            sakura.style.left = Math.random() * 100 + "vw";
-            sakura.style.animationDuration = (Math.random() * 5 + 5) + "s";
-            sakura.style.opacity = Math.random();
-            sakura.style.transform = `rotate(${Math.random() * 360}deg)`;
+    <script src="${pageContext.request.contextPath}/js/sakura.js"></script>
 
-            document.body.appendChild(sakura);
 
-            setTimeout(() => {
-                sakura.remove();
-            }, 10000);
-        }
-
-        setInterval(createSakura, 1000);
-    </script>
     <body>
         <div class="container-fluid home_container">
             <div class="web_page row">
-                <div class="col-md-3">
-                    <div class="logo">
-                        <img src="${pageContext.request.contextPath}/Sources/HomeSource/cloud.png" alt="logo"/>
-                        <p>IELTSPhobic</p>
-                    </div>
-                    <ul class="sidebar-menu">
-                        <li class="menu-item">
-                            <a href="${pageContext.request.contextPath}/HomeServlet">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/overview.png" alt="">
-                                <span>Overview</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="${pageContext.request.contextPath}/exam-list?type=READING">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading1.png" alt="">
-                                <span>Reading</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="${pageContext.request.contextPath}/exam-list?type=LISTENING">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone1.png" alt="">
-                                <span>Listening</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="${pageContext.request.contextPath}/exam-list?type=READING_FULL">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading2.png" alt="">
-                                <span>Reading (Full Test)</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="${pageContext.request.contextPath}/exam-list?type=LISTENING_FULL">
-                                <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone2.png" alt="">
-                                <span>Listening (Full Test)</span>
-                            </a>
-                        </li>
-                    </ul>
 
-                    <div class="upgrade-btn-container">
-                        <button class="btn-upgrade">Upgrade to Premium</button>
-                    </div>
-                </div>
+                <%-- Sidebar (nav-bar) đã được tách --%>
+                <jsp:include page="/includes/navbar.jsp" />
 
+                <%-- Main Content --%>
                 <div class="col-md-5">
                     <h2>Summary of your hard work</h2>
                     <div class="dedication_chart">
@@ -101,7 +47,7 @@
                                 <%
                                     java.time.LocalDate firstDay = month.atDay(1);
                                     int length = month.lengthOfMonth();
-                                    int dayOfWeekValue = firstDay.getDayOfWeek().getValue(); // Mon = 1, Sun = 7
+                                    int dayOfWeekValue = firstDay.getDayOfWeek().getValue(); // Mon = 1
                                     int currentDay = 1;
                                     List<java.time.LocalDate> completedDates = (List<java.time.LocalDate>) request.getAttribute("completedDates");
 
@@ -155,7 +101,6 @@
                                 </tbody>
                             </table>
                         </c:if>
-
                     </div>
                 </div>
 
@@ -168,7 +113,6 @@
                                 <button class="btn-set-goal">🎯 Set Your Goal</button>
                             </div>
                         </c:when>
-
                         <c:otherwise>
                             <div class="goals-section">
                                 <h4>Goals 🎯</h4>
@@ -180,16 +124,13 @@
                             </div>
                         </c:otherwise>
                     </c:choose>
+
                     <div class="outcome-summary mt-4">
                         <h4>Your Performance Outcome 📊</h4>
                         <c:if test="${not empty outcome}">
                             <div style="font-size: 14px; color: gray;">
                                 Entries in outcome: ${fn:length(outcome)}
                             </div>
-                        </c:if>
-
-
-                        <c:if test="${not empty outcome}">
                             <div class="goal-cards">
                                 <c:forEach var="entry" items="${outcome}">
                                     <div class="goal-card">
@@ -199,19 +140,9 @@
                                 </c:forEach>
                             </div>
                         </c:if>
-                        <div class="goal-card">
-                            ${entry.key}<br>
-                            <span>
-                                Value: ${entry.value} <br/>
-                                Type: ${entry.value.getClass().getName()}
-                            </span>
-                        </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
     </body>
 </html>
-

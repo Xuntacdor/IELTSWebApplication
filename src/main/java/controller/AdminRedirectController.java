@@ -48,10 +48,10 @@ public class AdminRedirectController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "addReading":
-                response.sendRedirect("addReadingTest.jsp");
+                response.sendRedirect("View/addReadingTest.jsp");
                 break;
             case "addListening":
-                response.sendRedirect("addListeningTest.jsp");
+                response.sendRedirect("View/addListeningTest.jsp");
                 break;
             default:
                 response.sendRedirect("admin.jsp");
