@@ -22,39 +22,162 @@
             .section-nav button:hover {
                 background-color: #2980b9;
             }
-
             .section-content {
                 display: flex;
                 gap: 20px;
                 padding: 20px;
             }
-
             .only-right {
                 justify-content: center;
             }
-
             .left-panel {
                 flex: 1;
             }
-
             .right-panel {
                 flex: 2;
             }
             .section-content.only-right {
                 justify-content: center;
             }
-
             .only-right .right-panel {
-                flex: 0 0 700px; /* hoặc width: 70%; hoặc max-width */
-            }   
-        </style>
-        <script>
-            function showSection(index) {
-                const sections = document.querySelectorAll('.section-content');
-                sections.forEach(div => div.style.display = 'none');
-                document.getElementById('section-' + index).style.display = 'flex';
+                flex: 0 0 700px;
             }
-        </script>
+            .vbee-player {
+                background: #fef2e6;
+                border-radius: 10px;
+                padding: 10px;
+                width: 820px;
+                max-width: 100%;
+                margin: 20px auto;
+            }
+
+            .vbee-player .controls {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                font-family: sans-serif;
+            }
+            .vbee-player .controls button {
+                background: #ff6f3c;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                padding: 10px;
+                cursor: pointer;
+                font-size: 16px;
+                min-width: 40px;
+            }
+            .vbee-player .controls button#speedBtn {
+                border-radius: 20px;
+                background: white;
+                color: #333;
+                border: 1px solid #ddd;
+                padding: 5px 10px;
+            }
+            .vbee-player .controls input[type="range"] {
+                width: 100px;
+            }
+            .vbee-player .progress-bar {
+                width: 100%;
+                height: 5px;
+                background: #ddd;
+                position: relative;
+                margin-bottom: 10px;
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            .vbee-player .progress-bar .progress {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 0%;
+                background: #ff6f3c;
+            }
+        </style>
+        
+       <script>
+    function showSection(index) {
+        const sections = document.querySelectorAll('.section-content');
+        sections.forEach(div => div.style.display = 'none');
+        document.getElementById('section-' + index).style.display = 'flex';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const audio = document.getElementById("audioReal");
+        if (!audio) return;
+
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const volumeSlider = document.getElementById("volumeSlider");
+        const rewindBtn = document.getElementById("rewindBtn");
+        const forwardBtn = document.getElementById("forwardBtn");
+        const speedBtn = document.getElementById("speedBtn");
+        const muteBtn = document.getElementById("muteBtn");
+        const progressBar = document.querySelector(".progress-bar .progress");
+        const trackTimeEl = document.getElementById("trackTime");
+
+        let speeds = [1, 1.25, 1.5, 0.75];
+        let speedIndex = 0;
+
+        function formatTime(time) {
+            if (!isFinite(time) || isNaN(time)) return "00:00";
+            const m = Math.floor(time / 60).toString().padStart(2, "0");
+            const s = Math.floor(time % 60).toString().padStart(2, "0");
+            return `${m}:${s}`;
+        }
+
+        function updateTrackTime() {
+            if (!trackTimeEl || !audio) {
+                return;
+            }
+            const current = formatTime(audio.currentTime);
+            const duration = isFinite(audio.duration) ? formatTime(audio.duration) : "00:00";
+            trackTimeEl.textContent = `${current} / ${duration}`;
+        }
+
+        // Cập nhật khi metadata đã load
+        audio.addEventListener("loadedmetadata", updateTrackTime);
+
+        // Cập nhật khi thời gian thay đổi
+        audio.addEventListener("timeupdate", () => {
+            if (isFinite(audio.duration)) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = percent + "%";
+            }
+            updateTrackTime();
+        });
+
+        playPauseBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.textContent = "⏸️";
+            } else {
+                audio.pause();
+                playPauseBtn.textContent = "▶️";
+            }
+        };
+
+        volumeSlider.oninput = () => audio.volume = volumeSlider.value;
+        rewindBtn.onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 5);
+        forwardBtn.onclick = () => audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+
+        speedBtn.onclick = () => {
+            speedIndex = (speedIndex + 1) % speeds.length;
+            audio.playbackRate = speeds[speedIndex];
+            speedBtn.textContent = `⏱ Tốc độ: ${speeds[speedIndex]}x`;
+        };
+
+        muteBtn.onclick = () => {
+            audio.muted = !audio.muted;
+            muteBtn.textContent = audio.muted ? "🔇" : "🔊";
+        };
+
+        // Nếu audio đã load sẵn trước đó
+        updateTrackTime();
+    });
+</script>
+
     </head>
     <body>
         <%
@@ -82,27 +205,22 @@
                 Passage first = (passages != null && passages.size() > 0) ? passages.get(0) : null;
                 if (first != null && first.getAudioUrl() != null && !first.getAudioUrl().isEmpty()) {
         %>
-        <div style="text-align:center; margin-bottom: 20px;">
-            <audio id="audioPlayer" controls style="width: 80%;">
-                <source src="<%= first.getAudioUrl()%>" type="audio/mpeg">
-            </audio>
+        <div id="customAudioPlayer" class="vbee-player">
+            <div class="progress-bar"><span class="progress"></span></div>
+            <div class="controls">
+                <span id="trackTime">00:00 / 00:00</span>
+                <button id="muteBtn">🔊</button>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1"/>
+                <button id="rewindBtn">↺</button>
+                <button id="playPauseBtn">⏸️</button>
+                <button id="forwardBtn">↻</button>
+                <button id="speedBtn">⏱ Tốc độ: 1x</button>
+            </div>
+            <audio id="audioReal" src="<%= first.getAudioUrl()%>"></audio>
         </div>
-        <script>
-        const category = '<%= examCategory%>';
-        const audio = document.getElementById('audioPlayer');
-        if (category === 'LISTENING_FULL') {
-            audio.addEventListener('loadedmetadata', function () {
-                audio.currentTime = 0;
-            });
-            audio.addEventListener('seeking', function () {
-                if (audio.currentTime > 0.5) {
-                    audio.currentTime = 0;
-                }
-            });
-        }
-        </script>
+
         <% }
-    }%>
+            }%>
 
         <form action="SubmitTestServlet" method="post">
             <input type="hidden" id="timeLimit" value="<%= totalSeconds%>"/>
@@ -161,10 +279,10 @@
                             <%= o.getOptionLabel()%>. <%= o.getOptionText()%>
                         </label><br/>
                         <% }
-                } else {%>
+                        } else {%>
                         <p style="color:red">❗ No options found for question ID <%= qId%></p>
                         <% }
-                } else if ("TRUE_FALSE_NOT_GIVEN".equals(type)) {%>
+                        } else if ("TRUE_FALSE_NOT_GIVEN".equals(type)) {%>
                         <label><input type="radio" name="answer_<%= qId%>" value="TRUE"/> TRUE</label><br/>
                         <label><input type="radio" name="answer_<%= qId%>" value="FALSE"/> FALSE</label><br/>
                         <label><input type="radio" name="answer_<%= qId%>" value="NOT GIVEN"/> NOT GIVEN</label><br/>
@@ -176,19 +294,19 @@
                             %>
                         <input type="text" name="answer_<%= qId%>_<%= i%>" title="Your answer" /><br/>
                         <% }
-                } else {%>
+                        } else {%>
                         <p style="color:red;">❗ No answers found for question ID <%= qId%></p>
                         <% }
-                } else {%>
+                        } else {%>
                         <input type="text" name="answer_<%= qId%>" placeholder="Your answer"/><br/>
                         <% } %>
                     </div>
                     <% }
-                } %>
+                        } %>
                 </div>
             </div>
             <% passageNumber++;
-        } %>
+                } %>
 
             <div class="section-nav">
                 <% for (int i = 1; i <= passages.size(); i++) {%>
@@ -196,7 +314,8 @@
                 <% }%>
             </div>
 
-            <div style="text-align:center; margin-top: 20px;">
+            <div style="text-align:center;
+                 margin-top: 20px;">
                 <input type="submit" value="✅ Hoàn thành bài làm" class="btn-submit"/>
             </div>
         </form>
