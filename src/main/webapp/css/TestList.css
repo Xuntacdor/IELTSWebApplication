@@ -1,0 +1,110 @@
+body {
+    font-family: 'ADLaM Display', cursive;
+    background-color: var(--pale-pink);
+    margin: 0;
+    padding: 0;
+}
+
+.background-noise-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../Sources/Others/noise.png');
+    background-size: cover;
+    background-repeat: repeat;
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.web_page {
+    position: relative;
+    z-index: 1;
+}
+
+.exam-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.exam-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.exam-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.exam-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 16px;
+    flex: 1;
+}
+
+.exam-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.4em;
+    margin-bottom: 6px;
+    height: 2.8em;
+    overflow: hidden;
+}
+
+.exam-type {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.badge-pass {
+    background-color: #6a0dad;
+    color: white;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 14px;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.btn-start {
+    background: linear-gradient(90deg, #6a0dad, #b370f0);
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 6px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    height: 36px;
+    transition: background 0.3s;
+    border: none;
+    margin-left:25%;
+}
+
+.btn-start:hover {
+    background: linear-gradient(90deg, #b370f0, #6a0dad);
+}
+
+.testbox {
+    padding-top: 30px;
+}

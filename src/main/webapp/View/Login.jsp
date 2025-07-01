@@ -8,7 +8,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Login.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/FishTank.css" />
         <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet" />
-
     </head>
     <body>
         <div class="container-fluid">
@@ -21,7 +20,6 @@
                         <input type="submit" value="Sign Up" id="signUp"/>
                     </form>
                 </div>
-
                 <div class="col-md-7 right fish-container">
                     <canvas id="fishCanvas"></canvas>
 

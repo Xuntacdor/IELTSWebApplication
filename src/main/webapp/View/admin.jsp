@@ -1,9 +1,3 @@
-<%-- 
-    Document   : admin
-    Created on : Jun 3, 2025, 10:24:07 PM
-    Author     : NTKC
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -13,12 +7,11 @@
     </head>
     <body>
         <h2>️ IELTS Admin Panel</h2>
-        <form method="post" action="admin-redirect">
+        <form method="post" action="${pageContext.request.contextPath}/admin-redirect">
             <button name="action" value="addReading"> Add Reading Test</button>
             <button name="action" value="addListening"> Add Listening Test</button>
         </form>
         <hr/>
         <a href="viewExam.jsp">View All Exams</a>
-
     </body>
 </html>

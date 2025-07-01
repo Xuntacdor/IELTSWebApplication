@@ -68,7 +68,6 @@ function addInput(qId, type) {
 
     wrapper.appendChild(input);
 
-    // 🔍 Thêm checkbox chỉ khi câu hỏi là MULTIPLE_CHOICE
     if (type === "answers") {
         const typeSelect = document.querySelector(`select[name="type_${qId}"]`);
         if (typeSelect && typeSelect.value === "MULTIPLE_CHOICE") {
@@ -85,8 +84,6 @@ function addInput(qId, type) {
 
     wrapper.appendChild(document.createElement("br"));
 }
-
-
 
 function handleTypeChange(qId, type) {
     const answerWrapper = document.getElementById(`answers_${qId}`);
@@ -108,7 +105,6 @@ function handleTypeChange(qId, type) {
         }
     });
 }
-
 
 window.onload = function () {
     addSection();

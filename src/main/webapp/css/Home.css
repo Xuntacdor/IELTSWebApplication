@@ -326,3 +326,14 @@ h2 {
         opacity: 0;
     }
 }
+.menu-item a.active {
+    background-color: var(--deep-purple);
+    color: red !important;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.menu-item a.active img {
+    filter: none !important;
+    opacity: 1 !important;
+}

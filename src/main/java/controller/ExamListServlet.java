@@ -43,12 +43,12 @@ public class ExamListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String type = req.getParameter("type"); // "READING" hoặc "LISTENING"
+        String type = req.getParameter("type"); 
         ExamDAO dao = new ExamDAO();
         List<Exam> exams = dao.getExamsByType(type);
 
         req.setAttribute("exams", exams);
-        req.setAttribute("examType", type); // để hiển thị tiêu đề
+        req.setAttribute("examType", type); 
         req.getRequestDispatcher("View/exam-list.jsp").forward(req, resp);
     }
 

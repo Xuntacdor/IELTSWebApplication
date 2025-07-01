@@ -31,6 +31,7 @@ public class UserDAO {
         }
         return null;
     }
+    
     public static void insertUser(String fullName, String email, String password, String gender, String dob){
         String sql = "INSERT INTO Users (full_name, email, password_hash, gender, date_of_birth) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection()){

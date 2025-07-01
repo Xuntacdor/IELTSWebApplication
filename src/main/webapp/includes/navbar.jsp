@@ -41,6 +41,15 @@
                 <span>Settings</span>
             </a>
         </li>
+
+        <c:if test="${sessionScope.role eq 'admin'}">
+            <li class="menu-item">
+                <a href="${pageContext.request.contextPath}/View/admin.jsp">
+                    <img src="${pageContext.request.contextPath}/Sources/HomeSource/add.png" alt="">
+                    <span>Add Test</span>
+                </a>
+            </li>
+        </c:if>
     </ul>
 
     <div class="upgrade-btn-container">

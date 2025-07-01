@@ -1,163 +1,93 @@
-body {
-    font-family: Arial;
-    margin: 0;
+body.reading-mode {
+    background-color: #fefefe;
+}
+body.listening-mode {
+    background-color: #f8f8ff;
 }
 
-.container {
-    display: flex;
-    height: calc(100vh - 60px);
-}
-
-.left-panel {
-    width: 50%;
-    padding: 20px;
-    overflow-y: auto;
-    border-right: 1px solid #ddd;
-}
-
-.right-panel {
-    width: 50%;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.section-box {
-    margin-bottom: 30px;
-}
-
-.question-box {
-    background: #f9f9f9;
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border-left: 5px solid #2c3e50;
-}
-
-.pagination-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 20px;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-}
-
-.pagination-container .question-number {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
+.section-nav {
     text-align: center;
-    border: 1px solid #2ecc71;
-    border-radius: 50%;
-    color: #2ecc71;
-    font-weight: bold;
-    background-color: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
+    margin: 30px 0 10px;
 }
-
-.pagination-container .question-number:hover {
-    background-color: #2ecc71;
+.section-nav button {
+    background-color: #3498db;
     color: white;
-}
-
-input[type="text"] {
-    padding: 8px 12px;
-    width: 100%;
-    max-width: 500px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin: 5px 0 10px 0;
-    font-size: 16px;
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-    transform: scale(1.2);
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #333;
-}
-
-.question-box p {
-    margin-bottom: 8px;
-}
-
-.question-box img {
-    margin: 10px 0;
-    max-width: 100%;
-    border-radius: 4px;
-}
-
-.question-box {
-    background: #fdfdfd;
-    border: 1px solid #ddd;
-    border-left: 5px solid #2980b9;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 25px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-input[type="submit"] {
-    padding: 10px 25px;
-    background-color: #2ecc71;
-    color: #fff;
     border: none;
-    font-size: 16px;
+    margin: 0 5px;
+    padding: 10px 18px;
     border-radius: 6px;
     cursor: pointer;
-    margin: 30px auto;
-    display: block;
-    transition: background-color 0.3s ease;
 }
-
-input[type="submit"]:hover {
-    background-color: #27ae60;
+.section-nav button:hover {
+    background-color: #2980b9;
 }
-
-/*time*/
-.header-bar {
+.section-content {
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+.section-content.only-right {
+    justify-content: center;
+}
+.left-panel {
+    flex: 1;
+}
+.right-panel {
+    flex: 2;
+}
+.only-right .right-panel {
+    flex: 0 0 700px;
+}
+
+.vbee-player {
+    background: #fef2e6;
+    border-radius: 10px;
+    padding: 10px;
+    width: 820px;
+    max-width: 100%;
+    margin: 20px auto;
+}
+.vbee-player .controls {
+    display: flex;
     align-items: center;
-    background-color: #fdf2e9;
-    padding: 12px 20px;
-    border-bottom: 2px solid #27ae60;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: sans-serif;
 }
-
-.timer {
-    background-color: #e74c3c;
+.vbee-player .controls button {
+    background: #ff6f3c;
     color: white;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.exit-btn {
-    background-color: white;
-    border: 1px solid #ccc;
-    color: #333;
+    border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
+    padding: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 16px;
+    min-width: 40px;
 }
-
-.exit-btn:hover {
-    background-color: #f2f2f2;
+.vbee-player .controls button#speedBtn {
+    border-radius: 20px;
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+}
+.vbee-player .controls input[type="range"] {
+    width: 100px;
+}
+.vbee-player .progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #ddd;
+    position: relative;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.vbee-player .progress-bar .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: #ff6f3c;
 }

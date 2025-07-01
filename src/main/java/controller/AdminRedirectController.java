@@ -22,7 +22,7 @@ public class AdminRedirectController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
 
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -48,13 +48,13 @@ public class AdminRedirectController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "addReading":
-                response.sendRedirect("View/addReadingTest.jsp");
+                response.sendRedirect(request.getContextPath() + "/View/addReadingTest.jsp");
                 break;
             case "addListening":
-                response.sendRedirect("View/addListeningTest.jsp");
+                response.sendRedirect(request.getContextPath() + "/View/addListeningTest.jsp");
                 break;
             default:
-                response.sendRedirect("admin.jsp");
+                response.sendRedirect(request.getContextPath() + "/admin.jsp");
         }
     }
 

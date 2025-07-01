@@ -2,12 +2,12 @@
 <html>
 <head>
     <title>Add IELTS Reading Test</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="js/form-script.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
+    <script src="${pageContext.request.contextPath}/js/form-script.js"></script>
 </head>
 <body>
     <h2>📝 Add IELTS Reading Test (Google Form style)</h2>
-    <form action="AddExamServlet" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/AddExamServlet" method="post" enctype="multipart/form-data">
         <label>Exam Title:</label><br/>
         <input type="text" name="examTitle" required/><br/><br/>
 
