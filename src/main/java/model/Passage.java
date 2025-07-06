@@ -11,9 +11,17 @@ public class Passage {
     private String type;
     private String audioUrl;
     private Timestamp createdAt;
-
+    private int section;
     public int getPassageId() {
         return passageId;
+    }
+
+    public int getSection() {
+        return section;
+    }
+
+    public void setSection(int section) {
+        this.section = section;
     }
 
     public void setPassageId(int passageId) {

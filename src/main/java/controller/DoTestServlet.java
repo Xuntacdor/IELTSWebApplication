@@ -17,43 +17,61 @@ public class DoTestServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            int examId = Integer.parseInt(req.getParameter("examId"));
+            // ✅ Kiểm tra và parse examId an toàn
+            String examIdRaw = req.getParameter("examId");
+            if (examIdRaw == null || !examIdRaw.matches("\\d+")) {
+                resp.sendRedirect("View/error.jsp?msg=Invalid examId");
+                return;
+            }
+            int examId = Integer.parseInt(examIdRaw);
 
-            // Load exam + passages
+            // Load DAOs
             ExamDAO examDAO = new ExamDAO();
             PassageDAO passageDAO = new PassageDAO();
             QuestionDAO questionDAO = new QuestionDAO();
             OptionDAO optionDAO = new OptionDAO();
             AnswerDAO answerDAO = new AnswerDAO();
 
+            // Lấy đề thi và danh sách passage
             Exam exam = examDAO.getExamById(examId);
             List<Passage> passages = passageDAO.getPassagesByExamId(examId);
 
+            // ✅ Sắp xếp passages theo section
+            passages.sort(Comparator.comparingInt(Passage::getSection));
+
+            // Lấy câu hỏi, options và answers
             Map<Integer, List<Question>> passageQuestions = new HashMap<>();
+            Map<Integer, List<Option>> questionOptions = new HashMap<>();
+            Map<Integer, List<Answer>> questionAnswers = new HashMap<>();
+
             for (Passage p : passages) {
-                passageQuestions.put(p.getPassageId(), questionDAO.getQuestionsByPassageId(p.getPassageId()));
+                List<Question> questions = questionDAO.getQuestionsByPassageId(p.getPassageId());
+                passageQuestions.put(p.getPassageId(), questions);
+
+                for (Question q : questions) {
+                    int qId = q.getQuestionId();
+                    questionOptions.put(qId, optionDAO.getOptionsByQuestionId(qId));
+                    questionAnswers.put(qId, answerDAO.getAnswersByQuestionId(qId));
+                }
             }
 
-            Map<Integer, List<Option>> questionOptions = optionDAO.getAllOptionsGroupedByQuestion();
-            Map<Integer, List<Answer>> questionAnswers = answerDAO.getAllAnswersGroupedByQuestion();
-
-            // Set attribute cho JSP
+            // Gán dữ liệu cho JSP
             req.setAttribute("exam", exam);
             req.setAttribute("passages", passages);
             req.setAttribute("passageQuestions", passageQuestions);
             req.setAttribute("questionOptions", questionOptions);
             req.setAttribute("questionAnswers", questionAnswers);
 
-            // Chuyển tới đúng giao diện (listening hoặc reading)
-            String jspPath = exam.getType().equalsIgnoreCase("LISTENING")
-                    ? "View/DoTestListening.jsp"
-                    : "View/DoTestReading.jsp";
+            // Chuyển tới trang hiển thị phù hợp
+            String type = exam.getType().toUpperCase();
+            String jspPath = type.contains("LISTENING") ? "View/DoTestListening.jsp" : "View/DoTestReading.jsp";
 
             req.getRequestDispatcher(jspPath).forward(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();
-            resp.sendRedirect("View/error.jsp");
+            req.setAttribute("errorMessage", "Lỗi khi tải đề thi: " + e.getMessage());
+            req.getRequestDispatcher("View/error.jsp").forward(req, resp);
         }
     }
 

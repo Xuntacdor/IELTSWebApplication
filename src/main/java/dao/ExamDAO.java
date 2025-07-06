@@ -136,7 +136,7 @@ public class ExamDAO {
 
         Exam newExam = new Exam();
         newExam.setTitle("Sample Exam " + System.currentTimeMillis());
-        newExam.setType("READING_SINGLE");  // sử dụng luôn trong cột type
+        newExam.setType("READING_SINGLE"); 
         newExam.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         int newId = dao.insertExam(newExam);
