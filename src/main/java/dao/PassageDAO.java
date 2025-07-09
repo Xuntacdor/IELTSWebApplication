@@ -10,7 +10,7 @@ import java.util.List;
 public class PassageDAO {
 
     public int insertPassage(Passage passage) {
-        String sql = "INSERT INTO Passages (examId, title, content, type, audioUrl, createdAt, section) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Passages (exam_id, title, content, type, audio_url, created_at, section) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -29,6 +29,7 @@ public class PassageDAO {
             }
 
         } catch (Exception e) {
+            System.err.println("❌ Lỗi khi insert passage:");
             e.printStackTrace();
         }
         return -1;
@@ -36,7 +37,7 @@ public class PassageDAO {
 
     public List<Passage> getPassagesByExamId(int examId) {
         List<Passage> list = new ArrayList<>();
-        String sql = "SELECT * FROM Passages WHERE exam_id = ? ORDER BY section ASC"; // ✅ sắp xếp theo section
+        String sql = "SELECT * FROM Passages WHERE exam_id = ? ORDER BY section ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -51,11 +52,12 @@ public class PassageDAO {
                 p.setAudioUrl(rs.getString("audio_url"));
                 p.setType(rs.getString("type"));
                 p.setCreatedAt(rs.getTimestamp("created_at"));
-                p.setSection(rs.getInt("section")); // ✅ lấy section
+                p.setSection(rs.getInt("section"));
                 list.add(p);
             }
 
         } catch (Exception e) {
+            System.err.println("❌ Lỗi khi lấy passage theo exam_id:");
             e.printStackTrace();
         }
         return list;
@@ -77,11 +79,12 @@ public class PassageDAO {
                 p.setAudioUrl(rs.getString("audio_url"));
                 p.setType(rs.getString("type"));
                 p.setCreatedAt(rs.getTimestamp("created_at"));
-                p.setSection(rs.getInt("section")); // ✅ lấy section
+                p.setSection(rs.getInt("section"));
                 return p;
             }
 
         } catch (Exception e) {
+            System.err.println("❌ Lỗi khi lấy passage theo id:");
             e.printStackTrace();
         }
         return null;

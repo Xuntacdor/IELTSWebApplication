@@ -5,8 +5,11 @@ import util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import model.Answer;
+import model.Exam;
+import model.Passage;
 
 public class QuestionDAO {
 
@@ -59,7 +62,6 @@ public class QuestionDAO {
         return list;
     }
 
-    // Lấy tất cả câu hỏi của bài thi
     public List<Question> getQuestionsByExamId(int examId) {
         List<Question> list = new ArrayList<>();
         String sql = "SELECT q.* FROM Questions q "
@@ -89,39 +91,68 @@ public class QuestionDAO {
     }
 
     public static void main(String[] args) {
-        int passageId = 17;
+        try {
+            ExamDAO examDAO = new ExamDAO();
+            PassageDAO passageDAO = new PassageDAO();
+            QuestionDAO questionDAO = new QuestionDAO();
+            AnswerDAO answerDAO = new AnswerDAO();
 
-        QuestionDAO questionDAO = new QuestionDAO();
-        AnswerDAO answerDAO = new AnswerDAO();
+            // 1. Tạo đề thi
+            Exam exam = new Exam();
+            exam.setTitle("IELTS Reading - Matching Information");
+            exam.setType("READING_SINGLE");
+            int examId = examDAO.insertExam(exam);
+            System.out.println("✅ Exam ID: " + examId);
 
-        List<Question> questions = questionDAO.getQuestionsByPassageId(passageId);
+            // 2. Tạo passage
+            Passage passage = new Passage();
+            passage.setExamId(examId);
+            passage.setSection(1);
+            passage.setTitle("Climate Change and Wildlife");
+            passage.setContent("Section A\nClimate change has significantly affected polar bears...\n\n"
+                    + "Section B\nDeforestation impacts biodiversity in rainforests...\n\n"
+                    + "Section C\nRising sea levels threaten coastal ecosystems...");
+            int passageId = passageDAO.insertPassage(passage);
+            System.out.println("✅ Passage ID: " + passageId);
 
-        if (questions == null || questions.isEmpty()) {
-            System.out.println("⚠️ Không có câu hỏi nào cho passage_id = " + passageId);
-            return;
-        }
+            // 3. Tạo câu hỏi Matching Information
+            Question question = new Question();
+            question.setPassageId(passageId);
+            question.setQuestionType("MATCHING_INFORMATION");
+            question.setQuestionText("Which section contains the following information?");
+            question.setInstruction("Choose the correct section (A, B or C) for each statement.");
+            int questionId = questionDAO.insertQuestion(question);
+            System.out.println("✅ Question ID: " + questionId);
 
-        System.out.println("📘 Câu hỏi của passage_id = " + passageId + ":");
-        for (Question q : questions) {
-            System.out.println("👉 QuestionID: " + q.getQuestionId());
-            System.out.println("   Type: " + q.getQuestionType());
-            System.out.println("   Instruction: " + q.getInstruction());
-            System.out.println("   QuestionText: " + q.getQuestionText());
-            System.out.println("   NumberInPassage: " + q.getNumberInPassage());
-            System.out.println("   Image: " + q.getImageUrl());
-
-            // In đáp án
-            List<Answer> answers = answerDAO.getAnswersByQuestionId(q.getQuestionId());
-            if (answers != null && !answers.isEmpty()) {
-                System.out.println("   ✅ Answers:");
-                for (Answer a : answers) {
-                    System.out.println("     - " + a.getAnswerText());
-                }
-            } else {
-                System.out.println("   ❌ Không có đáp án");
+            // 4. Thêm đáp án (các lựa chọn A, B, C, D...)
+            List<String> allOptions = Arrays.asList("A", "B", "C");
+            for (String option : allOptions) {
+                Answer a = new Answer();
+                a.setQuestionId(questionId);
+                a.setAnswerText(option);
+                a.setCorrect(false); // option thôi, chưa phải đúng
+                answerDAO.insertAnswer(a);
             }
 
-            System.out.println("-------------------------------------------------");
+            // 5. Thêm các câu đúng với section tương ứng
+            List<String> correctStatements = Arrays.asList(
+                    "A", // polar bears
+                    "B", // biodiversity
+                    "C" // rising sea levels
+            );
+            for (String correct : correctStatements) {
+                Answer a = new Answer();
+                a.setQuestionId(questionId);
+                a.setAnswerText(correct);
+                a.setCorrect(true);
+                answerDAO.insertAnswer(a);
+            }
+
+            System.out.println("✅ Đề MATCHING_INFORMATION đã được tạo thành công!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+    
 }

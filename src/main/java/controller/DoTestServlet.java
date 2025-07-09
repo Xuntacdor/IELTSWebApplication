@@ -17,7 +17,6 @@ public class DoTestServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // ✅ Kiểm tra và parse examId an toàn
             String examIdRaw = req.getParameter("examId");
             if (examIdRaw == null || !examIdRaw.matches("\\d+")) {
                 resp.sendRedirect("View/error.jsp?msg=Invalid examId");
@@ -32,14 +31,15 @@ public class DoTestServlet extends HttpServlet {
             OptionDAO optionDAO = new OptionDAO();
             AnswerDAO answerDAO = new AnswerDAO();
 
-            // Lấy đề thi và danh sách passage
             Exam exam = examDAO.getExamById(examId);
-            List<Passage> passages = passageDAO.getPassagesByExamId(examId);
+            if (exam == null) {
+                resp.sendRedirect("View/error.jsp?msg=Exam not found");
+                return;
+            }
 
-            // ✅ Sắp xếp passages theo section
+            List<Passage> passages = passageDAO.getPassagesByExamId(examId);
             passages.sort(Comparator.comparingInt(Passage::getSection));
 
-            // Lấy câu hỏi, options và answers
             Map<Integer, List<Question>> passageQuestions = new HashMap<>();
             Map<Integer, List<Option>> questionOptions = new HashMap<>();
             Map<Integer, List<Answer>> questionAnswers = new HashMap<>();
@@ -64,14 +64,16 @@ public class DoTestServlet extends HttpServlet {
 
             // Chuyển tới trang hiển thị phù hợp
             String type = exam.getType().toUpperCase();
-            String jspPath = type.contains("LISTENING") ? "View/DoTestListening.jsp" : "View/DoTestReading.jsp";
+            String jspPath = type.contains("LISTENING")
+                    ? "/View/DoTestListening.jsp"
+                    : "/View/DoTestReading.jsp";
 
             req.getRequestDispatcher(jspPath).forward(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("errorMessage", "Lỗi khi tải đề thi: " + e.getMessage());
-            req.getRequestDispatcher("View/error.jsp").forward(req, resp);
+            req.getRequestDispatcher("/View/error.jsp").forward(req, resp);
         }
     }
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a580a9a5-97a1-484c-b5c4-10463312d7a1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/AddExamController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/AddExamController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/PassageDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/PassageDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/QuestionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/QuestionDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/View/DoTestReading.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/View/DoTestReading.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/form-script.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/form-script.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2zXmOUHVWm6qeO5tvu1jIOq3Ftq" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/hmqua/OneDrive/Documents/NetBeansProjects/IELTSWebApplication",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a580a9a5-97a1-484c-b5c4-10463312d7a1" name="Changes" comment="" />
+      <created>1751885759668</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751885759668</updated>
+    </task>
+    <servers />
+  </component>
+</project>
