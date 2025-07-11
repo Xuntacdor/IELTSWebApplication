@@ -21,7 +21,6 @@ public class AddExamController extends HttpServlet {
     private final QuestionDAO questionDAO = new QuestionDAO();
     private final OptionDAO optionDAO = new OptionDAO();
     private final AnswerDAO answerDAO = new AnswerDAO();
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,9 +66,7 @@ public class AddExamController extends HttpServlet {
 
             for (int groupId = 1; groupId <= 100; groupId++) {
                 String groupType = request.getParameter("groupType_" + groupId);
-                if (groupType == null || groupType.trim().isEmpty()) {
-                    continue;
-                }
+                if (groupType == null || groupType.trim().isEmpty()) continue;
 
                 String groupInstruction = request.getParameter("groupInstruction_" + groupId);
                 String imageUrl = uploadImageByGroup(request, groupId);
@@ -87,8 +84,7 @@ public class AddExamController extends HttpServlet {
 
                     String headingsText = request.getParameter("headingList_" + groupId);
                     if (headingsText != null && !headingsText.trim().isEmpty()) {
-                        String[] headingLines = headingsText.split("\r?\n");
-                        for (String line : headingLines) {
+                        for (String line : headingsText.split("\r?\n")) {
                             if (!line.trim().isEmpty()) {
                                 Answer a = new Answer();
                                 a.setQuestionId(questionId);
@@ -99,10 +95,9 @@ public class AddExamController extends HttpServlet {
                         }
                     }
 
-                    String sectionMatches = request.getParameter("headingMapping_" + groupId);
-                    if (sectionMatches != null && !sectionMatches.trim().isEmpty()) {
-                        String[] mappingLines = sectionMatches.split("\r?\n");
-                        for (String line : mappingLines) {
+                    String mappingText = request.getParameter("headingMapping_" + groupId);
+                    if (mappingText != null && !mappingText.trim().isEmpty()) {
+                        for (String line : mappingText.split("\r?\n")) {
                             if (!line.trim().isEmpty()) {
                                 Answer a = new Answer();
                                 a.setQuestionId(questionId);
@@ -115,13 +110,38 @@ public class AddExamController extends HttpServlet {
                     continue;
                 }
 
+                if ("MATCHING_INFORMATION".equals(groupType)) {
+                    for (int q = 1; q <= 100; q++) {
+                        String statement = request.getParameter("q_" + groupId + "_" + q);
+                        String correctPara = request.getParameter("shortA_" + groupId + "_" + q);
+                        if (statement == null || statement.trim().isEmpty()) continue;
+
+                        Question question = new Question();
+                        question.setPassageId(passageId);
+                        question.setQuestionType(groupType);
+                        question.setInstruction(groupInstruction);
+                        question.setImageUrl(imageUrl);
+                        question.setNumberInPassage(-1);
+                        question.setExplanation("");
+                        question.setQuestionText(statement.trim());
+                        int questionId = questionDAO.insertQuestion(question);
+
+                        if (correctPara != null && !correctPara.trim().isEmpty()) {
+                            Answer a = new Answer();
+                            a.setQuestionId(questionId);
+                            a.setAnswerText(correctPara.trim());
+                            a.setCorrect(true);
+                            answerDAO.insertAnswer(a);
+                        }
+                    }
+                    continue;
+                }
+
                 for (int q = 1; q <= 100; q++) {
                     String questionText = "SUMMARY_COMPLETION".equals(groupType)
                             ? request.getParameter("summary_" + groupId + "_" + q)
                             : request.getParameter("q_" + groupId + "_" + q);
-                    if (questionText == null || questionText.trim().isEmpty()) {
-                        continue;
-                    }
+                    if (questionText == null || questionText.trim().isEmpty()) continue;
 
                     Question question = new Question();
                     question.setPassageId(passageId);
@@ -147,21 +167,13 @@ public class AddExamController extends HttpServlet {
 
     private String uploadImageByGroup(HttpServletRequest request, int groupId) throws IOException, ServletException {
         for (Part part : request.getParts()) {
-            if (part.getName().equals("groupImage_" + groupId)
-                    && part.getSize() > 0
-                    && part.getSubmittedFileName() != null
-                    && !part.getSubmittedFileName().isEmpty()) {
-
+            if (part.getName().equals("groupImage_" + groupId) && part.getSize() > 0) {
                 String fileName = part.getSubmittedFileName().replaceAll("\\s+", "_");
                 String diskPath = "C:/IELTS_Uploads/";
                 File dir = new File(diskPath);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-
+                if (!dir.exists()) dir.mkdirs();
                 File saveFile = new File(diskPath + fileName);
                 part.write(saveFile.getAbsolutePath());
-                System.out.println("✅ Saved image: " + saveFile.getAbsolutePath());
                 return "uploads/" + fileName;
             }
         }
@@ -176,91 +188,75 @@ public class AddExamController extends HttpServlet {
         return questionText.trim();
     }
 
-   private void insertAnswersAndOptions(String type, int groupId, int q, int questionId, HttpServletRequest request) {
-    switch (type) {
-        case "MULTIPLE_CHOICE":
-            for (int i = 0;; i++) {
-                String optText = request.getParameter("a_" + groupId + "_" + q + "_" + i);
-                if (optText == null || optText.trim().isEmpty()) break;
-                boolean isCorrect = request.getParameter("correct_" + groupId + "_" + q + "_" + i) != null;
-                Option option = new Option();
-                option.setQuestionId(questionId);
-                option.setOptionLabel(String.valueOf((char) ('A' + i)));
-                option.setOptionText(optText.trim());
-                option.setIsCorrect(isCorrect);
-                optionDAO.insertOption(option);
-            }
-            break;
-
-        case "TRUE_FALSE_NOT_GIVEN":
-        case "YES_NO_NOT_GIVEN": {
-            String answer = request.getParameter("answer_" + groupId + "_" + q);
-            if (answer != null && !answer.trim().isEmpty()) {
-                Answer a = new Answer();
-                a.setQuestionId(questionId);
-                a.setAnswerText(answer.trim());
-                a.setCorrect(true);
-                answerDAO.insertAnswer(a);
-            }
-            break;
-        }
-
-        case "MATCHING":
-            for (int i = 0; i < 10; i++) {
-                String left = request.getParameter("matchQ_" + groupId + "_" + q + "_" + i);
-                String right = request.getParameter("matchA_" + groupId + "_" + q + "_" + i);
-                if (left != null && right != null && !left.trim().isEmpty() && !right.trim().isEmpty()) {
-                    Answer pair = new Answer();
-                    pair.setQuestionId(questionId);
-                    pair.setAnswerText(left.trim() + " = " + right.trim());
-                    pair.setCorrect(true);
-                    answerDAO.insertAnswer(pair);
+    private void insertAnswersAndOptions(String type, int groupId, int q, int questionId, HttpServletRequest request) {
+        switch (type) {
+            case "MULTIPLE_CHOICE":
+                for (int i = 0; ; i++) {
+                    String optText = request.getParameter("a_" + groupId + "_" + q + "_" + i);
+                    if (optText == null || optText.trim().isEmpty()) break;
+                    boolean isCorrect = request.getParameter("correct_" + groupId + "_" + q + "_" + i) != null;
+                    Answer answer = new Answer();
+                    answer.setQuestionId(questionId);
+                    answer.setAnswerText(optText.trim());
+                    answer.setCorrect(isCorrect);
+                    answerDAO.insertAnswer(answer);
                 }
-            }
-            break;
+                break;
 
-        case "MATCHING_INFORMATION":
-            String answerMI = request.getParameter("shortA_" + groupId + "_" + q);
-            if (answerMI != null && !answerMI.trim().isEmpty()) {
-                Answer a = new Answer();
-                a.setQuestionId(questionId);
-                a.setAnswerText(answerMI.trim()); 
-                a.setCorrect(true);
-                answerDAO.insertAnswer(a);
-            }
-            break;
-
-        case "SUMMARY_COMPLETION":
-        default: {
-            String answerText = request.getParameter("shortA_" + groupId + "_" + q);
-            if ((answerText == null || answerText.trim().isEmpty())
-                    && (type.equals("FLOWCHART") || type.equals("TABLE_COMPLETION") || type.equals("DIAGRAM_LABELING"))) {
-                answerText = request.getParameter("imageQ_" + groupId + "_" + q);
-            }
-
-            if (answerText != null && !answerText.trim().isEmpty()) {
-                if (type.equals("SUMMARY_COMPLETION")) {
-                    String[] lines = answerText.split("\r?\n");
-                    for (String ans : lines) {
-                        if (!ans.trim().isEmpty()) {
-                            Answer a = new Answer();
-                            a.setQuestionId(questionId);
-                            a.setAnswerText(ans.trim());
-                            a.setCorrect(true);
-                            answerDAO.insertAnswer(a);
-                        }
-                    }
-                } else {
+            case "TRUE_FALSE_NOT_GIVEN":
+            case "YES_NO_NOT_GIVEN":
+                String answer = request.getParameter("answer_" + groupId + "_" + q);
+                if (answer != null && !answer.trim().isEmpty()) {
                     Answer a = new Answer();
                     a.setQuestionId(questionId);
-                    a.setAnswerText(answerText.trim());
+                    a.setAnswerText(answer.trim());
                     a.setCorrect(true);
                     answerDAO.insertAnswer(a);
                 }
-            }
-            break;
+                break;
+
+            case "MATCHING":
+                for (int i = 0; i < 10; i++) {
+                    String left = request.getParameter("matchQ_" + groupId + "_" + q + "_" + i);
+                    String right = request.getParameter("matchA_" + groupId + "_" + q + "_" + i);
+                    if (left != null && right != null && !left.trim().isEmpty() && !right.trim().isEmpty()) {
+                        Answer pair = new Answer();
+                        pair.setQuestionId(questionId);
+                        pair.setAnswerText(left.trim() + " = " + right.trim());
+                        pair.setCorrect(true);
+                        answerDAO.insertAnswer(pair);
+                    }
+                }
+                break;
+
+            case "SUMMARY_COMPLETION":
+            default:
+                String answerText = request.getParameter("shortA_" + groupId + "_" + q);
+                if ((answerText == null || answerText.trim().isEmpty())
+                        && (type.equals("FLOWCHART") || type.equals("TABLE_COMPLETION") || type.equals("DIAGRAM_LABELING"))) {
+                    answerText = request.getParameter("imageQ_" + groupId + "_" + q);
+                }
+
+                if (answerText != null && !answerText.trim().isEmpty()) {
+                    if ("SUMMARY_COMPLETION".equals(type)) {
+                        for (String ans : answerText.split("\r?\n")) {
+                            if (!ans.trim().isEmpty()) {
+                                Answer a = new Answer();
+                                a.setQuestionId(questionId);
+                                a.setAnswerText(ans.trim());
+                                a.setCorrect(true);
+                                answerDAO.insertAnswer(a);
+                            }
+                        }
+                    } else {
+                        Answer a = new Answer();
+                        a.setQuestionId(questionId);
+                        a.setAnswerText(answerText.trim());
+                        a.setCorrect(true);
+                        answerDAO.insertAnswer(a);
+                    }
+                }
+                break;
         }
     }
-}
-
 }

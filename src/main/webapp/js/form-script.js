@@ -80,7 +80,9 @@ function changeGroupType(groupId, type) {
 
 
 function addQuestion(groupId) {
-    const questionId = questionCounts[groupId].length + 1;
+    if (!window.nextQuestionId) window.nextQuestionId = {};
+    if (!window.nextQuestionId[groupId]) window.nextQuestionId[groupId] = 1;
+    const questionId = window.nextQuestionId[groupId]++;
     questionCounts[groupId].push(questionId);
     const type = document.querySelector(`[name="groupType_${groupId}"]`).value;
     const container = document.getElementById(`questions-container-${groupId}`);
@@ -93,17 +95,14 @@ function addQuestion(groupId) {
         html += `
         <label>Question Text:</label>
         <input type="text" name="q_${groupId}_${questionId}" class="form-control mb-2" required>
-
-        <label>Options (each line is one option):</label>
-        <textarea name="options_${groupId}_${questionId}" class="form-control" rows="4" placeholder="Option A\nOption B\nOption C\nOption D"></textarea>
-
-        <label class="mt-2">Correct Answer(s):</label>
-        <input type="text" name="correctOptions_${groupId}_${questionId}" class="form-control mb-2" placeholder="e.g., A or A,B">`;
+        <div id="options_${groupId}_${questionId}"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addOption(${groupId}, ${questionId})">➕ Add Option</button>
+        `;
 
     } else if (type === "MATCHING_INFORMATION") {
         html += `
         <label>Question:</label>
-        <input type="text" name="q_${groupId}_${questionId}" class="form-control" placeholder="Mentioned research conducted in Ohio">
+        <input type="text" name="q_${groupId}_${questionId}" class="form-control" placeholder="Statement">
         <label class="mt-2">Correct Paragraph (A-K):</label>
         <input type="text" name="shortA_${groupId}_${questionId}" class="form-control" placeholder="e.g., B">`;
 
@@ -164,17 +163,17 @@ function addOption(groupId, questionId) {
     const container = document.getElementById(`options_${groupId}_${questionId}`);
     const index = container ? container.children.length : 0;
 
-    const optHtml = `
-    <div class="row mb-2 option-row">
-      <div class="col-md-5">
-        <input type="text" name="a_${groupId}_${questionId}_${index}" class="form-control" placeholder="Option ${String.fromCharCode(65 + index)}" required>
+    const optHtml = ` 
+   <div class="row mb-2 option-row align-items-center">
+      <div class="col-md-6">
+        <input type="text" name="a_${groupId}_${questionId}_${index}" class="form-control" placeholder="Option ${String.fromCharCode(65 + index)} (edit text here)" required>
       </div>
       <div class="col-md-2 d-flex align-items-center">
         <input class="form-check-input me-1" type="checkbox" name="correct_${groupId}_${questionId}_${index}">
-        <label class="form-check-label">Correct</label>
+        <label class="form-check-label ms-1">Correct</label>
       </div>
       <div class="col-md-2">
-        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOption(this)">❌</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOption(this)">🗑 Remove</button>
       </div>
     </div>`;
 
@@ -192,4 +191,5 @@ function removeQuestion(groupId, questionId) {
     if (qBlock)
         qBlock.remove();
     questionCounts[groupId] = questionCounts[groupId].filter(id => id !== questionId);
+    // Không giảm nextQuestionId để đảm bảo id luôn tăng, không trùng
 }

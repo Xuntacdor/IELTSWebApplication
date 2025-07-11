@@ -85,8 +85,18 @@ public class UserProgressDAO {
         return result;
     }
 
-    public static void main(String[] args) {
-        Map<String, Float> map = UserProgressDAO.getAverageScoreByType(3);
-        System.out.println(map);
+    public static void insertUserProgress(int userId, int examId, double score, String type) {
+        String sql = "INSERT INTO UserProgress (user_id, exam_id, score, type, completed_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, examId);
+            ps.setDouble(3, score);
+            ps.setString(4, type);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+  
 }

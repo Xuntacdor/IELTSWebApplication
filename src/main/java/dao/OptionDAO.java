@@ -80,7 +80,6 @@ public class OptionDAO {
                 o.setOptionText(rs.getString("option_text"));
                 o.setIsCorrect(rs.getBoolean("is_correct"));
 
-                // gom nhóm theo question_id
                 map.computeIfAbsent(qId, k -> new ArrayList<>()).add(o);
             }
         } catch (Exception e) {

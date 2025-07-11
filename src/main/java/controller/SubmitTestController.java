@@ -117,6 +117,18 @@ public class SubmitTestController extends HttpServlet {
 
         double score = total > 0 ? ((double) correct / total) * 100 : 0;
 
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                int userId = user.getUserId();
+                ExamDAO examDAO = new ExamDAO();
+                Exam exam = examDAO.getExamById(examId);
+                String type = (exam != null) ? exam.getType() : "Unknown";
+                UserProgressDAO.insertUserProgress(userId, examId, score, type);
+            }
+        }
+
         request.setAttribute("correct", correct);
         request.setAttribute("total", total);
         request.setAttribute("score", score);
