@@ -12,11 +12,15 @@ public class User implements Serializable {
     private String role;
     private boolean isActive;
     private String phoneNumber;
+    
+    private int camBalance;
+    private boolean isPremium;
+    private String premiumExpiredAt;
 
     public User() {
     }
 
-    public User(int userId, String fullName, String email, String passwordHash, String gender, String dateOfBirth, String role, boolean isActive, String phoneNumber) {
+    public User(int userId, String fullName, String email, String passwordHash, String gender, String dateOfBirth, String role, boolean isActive, String phoneNumber, int camBalance, boolean isPremium, String premiumExpiredAt) {
         this.userId = userId;
         this.fullName = fullName;
         this.email = email;
@@ -26,7 +30,12 @@ public class User implements Serializable {
         this.role = role;
         this.isActive = isActive;
         this.phoneNumber = phoneNumber;
+        this.camBalance = camBalance;
+        this.isPremium = isPremium;
+        this.premiumExpiredAt = premiumExpiredAt;
     }
+
+    
 
     // Getter & Setter
     public int getUserId() {
@@ -100,6 +109,40 @@ public class User implements Serializable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+    //New Cam
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public int getCamBalance() {
+        return camBalance;
+    }
+
+    public void setCamBalance(int camBalance) {
+        this.camBalance = camBalance;
+    }
+
+    public boolean isIsPremium() {
+        return isPremium;
+    }
+
+    public void setIsPremium(boolean isPremium) {
+        this.isPremium = isPremium;
+    }
+
+    public String getPremiumExpiredAt() {
+        return premiumExpiredAt;
+    }
+
+    public void setPremiumExpiredAt(String premiumExpiredAt) {
+        this.premiumExpiredAt = premiumExpiredAt;
+    }
+    
+    
 
     @Override
     public String toString() {
@@ -108,6 +151,8 @@ public class User implements Serializable {
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
+                ", camBalance=" + camBalance +
+                ", isPremium=" + isPremium +
                 '}';
     }
 }

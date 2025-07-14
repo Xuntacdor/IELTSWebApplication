@@ -1,0 +1,385 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(to bottom, #764ba2, #667eea);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+
+/* ==== PHẦN GÓI NẠP ==== */
+.cam-package-section h3{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 200px
+}
+.package-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 100px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.package-card {
+    width: 200px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.package-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.package-img {
+    background: #101820;
+    padding: 10px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.package-img img {
+    max-height: 80px;
+    max-width: 100%;
+    object-fit: contain;
+}
+.bonus-overlay {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    backdrop-filter: blur(3px);
+}
+
+.package-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+}
+.package-text {
+    text-align: left;
+}
+.package-text .cam-amount {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.package-text .price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #f15e2c;
+}
+
+
+.package-details .bonus {
+    font-size: 13px;
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+
+
+.package-details .btn {
+    background-color: #ff6d00;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* ==== PHẦN QR/THÔNG TIN ==== */
+.fuo-payment-container {
+    padding: 15px;
+    background: transparent;
+}
+
+
+.fuo-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.fuo-header {
+    text-align: center;
+    margin-bottom: 25px;
+    color: white;
+}
+
+.fuo-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.fuo-header p {
+    font-size: 16px;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.fuo-payment-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.fuo-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 480px;
+}
+
+.fuo-bank-info {
+    padding: 25px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+    position: relative;
+}
+
+.fuo-bank-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.fuo-qr-section {
+    padding: 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.fuo-section-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fuo-qr-section .fuo-section-title {
+    color: white;
+}
+
+.fuo-info-item {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: white;
+    border-radius: 10px;
+    border-left: 3px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fuo-info-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.fuo-info-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fuo-info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e53e3e;
+    word-break: break-word;
+    cursor: pointer;
+}
+
+.fuo-exchange-rate {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 6px 20px rgba(238, 90, 82, 0.3);
+}
+
+.fuo-exchange-rate .rate {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.fuo-exchange-rate .subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.fuo-notice {
+    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 6px 20px rgba(25, 84, 123, 0.2);
+}
+
+.fuo-notice h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.fuo-notice p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.fuo-qr-code {
+    background: white;
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.fuo-qr-code:hover {
+    transform: scale(1.03);
+}
+
+.fuo-qr-code img {
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+.fuo-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #48bb78;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+.fuo-pulse {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: fuoPulse 2s infinite;
+}
+
+@keyframes fuoPulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* ==== RESPONSIVE ==== */
+@media screen and (max-width: 768px) {
+    .fuo-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fuo-header h1 {
+        font-size: 26px;
+    }
+
+    .fuo-bank-info,
+    .fuo-qr-section {
+        padding: 20px;
+    }
+
+    .fuo-section-title {
+        font-size: 19px;
+    }
+
+    .fuo-container {
+        padding: 0 10px;
+    }
+
+    .fuo-payment-container {
+        padding: 10px;
+    }
+
+    .row-cols-md-4 > .col {
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .fuo-header h1 {
+        font-size: 22px;
+    }
+
+    .fuo-info-item {
+        padding: 10px;
+    }
+
+    .fuo-bank-info,
+    .fuo-qr-section {
+        padding: 15px;
+    }
+
+    .fuo-section-title {
+        font-size: 18px;
+    }
+
+    .row-cols-md-4 > .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

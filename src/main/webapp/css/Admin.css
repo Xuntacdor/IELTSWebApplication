@@ -1,79 +1,99 @@
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #9D80BE, #7F55B1);
+    min-height: 100vh;
+    background: linear-gradient(270deg, #9D80BE, #7F55B1, #6DD5FA, #FCECEC);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+}
+
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.18);
+    padding: 44px 32px 36px 32px;
+    border-radius: 22px;
+    backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 8px 40px 0 rgba(0,0,0,0.25);
+    border: 1.5px solid rgba(255,255,255,0.25);
     text-align: center;
-    width: 400px;
+    width: 95%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
 }
 
 h2 {
     margin-bottom: 30px;
-    font-size: 26px;
-    font-weight: 600;
+    font-size: 28px;
+    font-weight: 700;
     color: #fff;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 12px #7F55B1aa;
+    animation: fadeInDown 1s;
+}
+
+@keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 .admin-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
 }
 
 .admin-btn {
-    padding: 14px 20px;
-    background: #fff;
+    padding: 16px 0;
+    background: linear-gradient(90deg, #fff 60%, #FCECEC 100%);
     color: #7F55B1;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 17px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 12px 0 #7F55B155;
+    transition: box-shadow 0.3s, color 0.3s, background 0.3s;
+    outline: none;
+}
+
+.admin-btn:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(127,85,177,0.15);
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+    z-index: 0;
+}
+
+.admin-btn:active:after {
+    width: 200px;
+    height: 200px;
 }
 
 .admin-btn:hover {
-    background: #E4A4AF;
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+    background: linear-gradient(90deg, #E4A4AF 60%, #7F55B1 100%);
+    color: #fff;
+    box-shadow: 0 4px 24px 0 #FCECEC99, 0 0 8px #fff;
+    border: 1.5px solid #fff;
 }
 
-.divider {
-    margin: 30px 0;
-    border: none;
-    height: 2px;
-    background: white;
-    opacity: 0.2;
-}
-
-.view-link {
-    color: #FCECEC;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.view-link:hover {
-    color: #ffffff;
-    text-shadow: 0 0 10px #fff;
-}
 .admin-btn.clicked {
     animation: pop 0.3s ease;
 }
@@ -82,4 +102,63 @@ h2 {
     0% { transform: scale(1); }
     50% { transform: scale(1.15); }
     100% { transform: scale(1); }
+}
+
+.divider {
+    margin: 32px 0 24px 0;
+    border: none;
+    height: 2.5px;
+    background: linear-gradient(90deg, #fff 0%, #FCECEC 100%);
+    opacity: 0.35;
+    animation: fadeInDivider 1.2s;
+}
+
+@keyframes fadeInDivider {
+    0% { opacity: 0; width: 0; }
+    100% { opacity: 0.35; width: 100%; }
+}
+
+.view-link {
+    color: #FCECEC;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.view-link:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    transition: width 0.3s;
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+}
+
+.view-link:hover {
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+}
+
+.view-link:hover:after {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 98%;
+        padding: 18px 4px 18px 4px;
+        max-width: 98vw;
+    }
+    h2 {
+        font-size: 20px;
+    }
+    .admin-btn {
+        font-size: 15px;
+        padding: 12px 0;
+    }
 }

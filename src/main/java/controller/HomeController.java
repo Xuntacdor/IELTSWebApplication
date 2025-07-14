@@ -1,3 +1,4 @@
+
 package controller;
 
 import model.PracticeHistoryItem;
@@ -23,10 +24,18 @@ public class HomeController extends HttpServlet {
             throws ServletException, IOException {
 
         User user = (User) request.getSession().getAttribute("user");
+        System.out.println("userId in session: " + user.getUserId());
         if (user == null) {
             response.sendRedirect("View/Login.jsp");
             return;
         }
+
+        int camBalance = dao.UserDAO.getCamBalanceById(user.getUserId());
+        user.setCamBalance(camBalance);
+        request.getSession().setAttribute("user", user);
+
+        java.util.List<model.PremiumPlan> plans = dao.PremiumPlanDAO.getAllPlans();
+        request.getSession().setAttribute("plans", plans);
 
         int userId = user.getUserId();
 

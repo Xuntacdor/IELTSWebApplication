@@ -1,0 +1,245 @@
+:root {
+    --primary-text: #4B3B60;
+    --secondary-text: #9D80BE;
+    --highlight-text: #7F55B1;
+    --deep-purple: #7F55B1;
+    --soft-purple: #9D80BE;
+    --soft-pink: #E4A4AF;
+    --pale-pink: #FCECEC;
+}
+
+/* === Sidebar Navbar === */
+.sidebar-wrapper {
+    position: relative;
+    min-height: 100vh;
+    background-color: var(--pale-pink);
+    padding-bottom: 80px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+    border-bottom: 1px solid var(--soft-pink);
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo p {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--soft-purple);
+    margin: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    margin-top: 50px;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 25px;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    color: var(--primary-text);
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.menu-item a img {
+    width: 28px;
+    height: 28px;
+    margin-right: 15px;
+    filter: grayscale(0.3);
+    transition: filter 0.3s ease;
+}
+
+.menu-item a:hover {
+    background-color: var(--deep-purple);
+    color: white;
+}
+
+.menu-item a:hover img {
+    filter: none;
+}
+
+.menu-item a.active {
+    background-color: var(--deep-purple);
+    color: red !important;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.menu-item a.active img {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* === Upgrade Button === */
+.upgrade-btn-container {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    width: calc(100% - 30px);
+}
+
+
+/* === Modal Premium === */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* === Modal Premium Animation === */
+.animated-modal {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.98);
+    transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.animated-modal.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 850px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 12px 32px rgba(127, 85, 177, 0.18), 0 1.5px 6px rgba(0,0,0,0.08);
+    border: 2px solid var(--soft-purple);
+    animation: none;
+}
+
+.plan-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+.plan {
+    width: 180px;
+    height: 180px;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 10px;
+    background: linear-gradient(180deg, var(--soft-purple), var(--pale-pink));
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.plan:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(127, 85, 177, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+    z-index: 2;
+}
+
+.plan.featured {
+    background: linear-gradient(180deg, var(--deep-purple), var(--soft-purple));
+    color: white;
+}
+
+.plan h4 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.plan p {
+    font-size: 16px;
+    margin: 0;
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: gold;
+    color: #4B3B60;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-pay {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #4B3B60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--deep-purple), var(--soft-pink));
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(127, 85, 177, 0.10);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-pay:hover {
+    background: linear-gradient(90deg, var(--soft-pink), var(--deep-purple));
+    box-shadow: 0 4px 16px rgba(127, 85, 177, 0.18);
+}
+
+.btn-close {
+    margin-top: 20px;
+    padding: 8px 20px;
+    background-color: var(--soft-pink);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--soft-pink), var(--soft-purple));
+    color: var(--primary-text);
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-close:hover {
+    background: linear-gradient(90deg, var(--soft-purple), var(--soft-pink));
+    color: var(--deep-purple);
+}
+
+/* === Improve text color for readability === */
+.plan, .plan h4, .plan p {
+    color: var(--primary-text) !important;
+}
+.plan.featured, .plan.featured h4, .plan.featured p {
+    color: #fff !important;
+}
+
+/* === Shake animation for plan cards on hover === */
+@keyframes shake {
+    0% { transform: translateY(-8px) scale(1.04) translateX(0); }
+    20% { transform: translateY(-8px) scale(1.04) translateX(-4px); }
+    40% { transform: translateY(-8px) scale(1.04) translateX(4px); }
+    60% { transform: translateY(-8px) scale(1.04) translateX(-2px); }
+    80% { transform: translateY(-8px) scale(1.04) translateX(2px); }
+    100% { transform: translateY(-8px) scale(1.04) translateX(0); }
+}
+.plan:hover {
+    animation: shake 0.4s cubic-bezier(0.36,0.07,0.19,0.97) both;
+}
