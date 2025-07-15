@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dao.UserDAO;
 
 @WebServlet(name = "SignUpController", urlPatterns = {"/SignUpController"})
 public class SignUpController extends HttpServlet {
@@ -27,6 +28,13 @@ public class SignUpController extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
         String gender = request.getParameter("gender");
         String dobStr = request.getParameter("dateOfBirth"); 
+
+        // Check if user already exists by email
+        if (UserDAO.userExistsByEmail(email)) {
+            request.setAttribute("error", "A user with this email already exists!");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Confirm password does not match!");

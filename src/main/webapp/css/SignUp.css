@@ -1,165 +1,326 @@
-/* Reset cơ bản */
-* {
+/* Underwater Ocean Background */
+*, *::before, *::after {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f0e6d2, #b8860b);
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #a8e6ff 0%, #5ee7df 50%, #2193b0 100%);
+    overflow-x: hidden;
+    position: relative;
+}
+.ocean-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+/* Bubbles */
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 2px 16px 2px rgba(173,216,230,0.2);
+    animation: bubbleUp 12s infinite ease-in;
+}
+.bubble1 { width: 60px; height: 60px; left: 10vw; bottom: 5vh; animation-delay: 0s; }
+.bubble2 { width: 40px; height: 40px; left: 30vw; bottom: 10vh; animation-delay: 2s; }
+.bubble3 { width: 30px; height: 30px; left: 60vw; bottom: 0vh; animation-delay: 4s; }
+.bubble4 { width: 50px; height: 50px; left: 80vw; bottom: 8vh; animation-delay: 1s; }
+.bubble5 { width: 25px; height: 25px; left: 50vw; bottom: 3vh; animation-delay: 3s; }
+@keyframes bubbleUp {
+    0% { transform: translateY(0) scale(1); opacity: 0.7; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-90vh) scale(1.2); opacity: 0; }
+}
+/* Fish */
+.fish {
+    position: absolute;
+    z-index: 1;
+    opacity: 0.7;
+    pointer-events: none;
+    animation: fishSwim 18s linear infinite;
+}
+.fish1 { left: 5vw; top: 60vh; width: 70px; animation-delay: 0s; }
+.fish2 { left: 80vw; top: 30vh; width: 60px; animation-delay: 8s; transform: scaleX(-1); }
+@keyframes fishSwim {
+    0% { transform: translateX(0) scaleX(1); }
+    50% { transform: translateX(40vw) scaleX(1); }
+    51% { transform: translateX(40vw) scaleX(-1); }
+    100% { transform: translateX(0) scaleX(-1); }
+}
+/* Coral & Seaweed (SVG or CSS shapes) */
+.coral, .seaweed {
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.seaweed-left {
+    left: 60px;
+    width: 40px; height: 80px;
+    background: linear-gradient(120deg, #5ee7df 60%, #2193b0 100%);
+    border-radius: 30% 70% 60% 40%/60% 40% 70% 30%;
+    opacity: 0.4;
+}
+.seaweed-right {
+    right: 60px;
+    width: 40px; height: 80px;
+    background: linear-gradient(120deg, #5ee7df 60%, #2193b0 100%);
+    border-radius: 70% 30% 40% 60%/40% 60% 30% 70%;
+    opacity: 0.4;
+}
+/* Header & Footer IELTS Branding */
+.signup-header, .signup-footer {
+    width: 100vw;
+    text-align: center;
+    padding: 18px 0 8px 0;
+    font-family: 'ADLaM Display', cursive;
+    font-size: 2.1rem;
+    color: #0a3d62;
+    letter-spacing: 2px;
+    z-index: 2;
+    background: transparent;
+    position: relative;
+}
+.signup-header .ielts-logo, .signup-footer .ielts-footer-logo {
+    font-weight: bold;
+    color: #2193b0;
+    margin-right: 10px;
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+}
+.signup-header .ielts-icon, .signup-footer .ielts-footer-icon {
+    color: #2193b0;
+    margin: 0 6px;
+    font-size: 1.3rem;
+    vertical-align: middle;
+}
+.signup-footer {
+    font-size: 1.1rem;
+    margin-top: 30px;
+    padding-bottom: 18px;
+}
+/* Glassy Bubble Form */
+.form-bubble-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    min-height: 70vh;
+    z-index: 2;
+    position: relative;
 }
-
-/* Container form */
-.form-container {
-    background: #fff8f0;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(184, 134, 11, 0.3);
-    padding: 40px 50px;
-    width: 380px;
+.form-bubble {
+    background: rgba(255,255,255,0.25);
+    border-radius: 30px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(30, 144, 255, 0.18);
+    padding: 38px 36px 28px 36px;
+    width: 370px;
+    max-width: 95vw;
     text-align: center;
+    z-index: 2;
+    margin: 30px 0 0 0;
+    position: relative;
 }
-
-/* Tiêu đề */
-.form-container h2 {
+.bubble-title {
     font-family: 'ADLaM Display', cursive;
-    font-size: 40px; /* thay 2.5rem ≈ 40px */
-    margin-bottom: 25px;
-    color: #b8860b;
+    font-size: 2.3rem;
+    color: #2193b0;
+    margin-bottom: 22px;
     letter-spacing: 2px;
-    text-shadow: 1px 1px 4px rgba(184, 134, 11, 0.7);
+    text-shadow: 1px 2px 8px rgba(94,231,223,0.13);
 }
-
-/* Input + icon container */
+/* Ô input có icon bên trái và mắt bên phải */
 .input-icon {
     position: relative;
     margin-bottom: 20px;
 }
 
-.input-icon i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #b8860b;
-    font-size: 18px; /* thay 1.1rem ≈ 18px */
-    transition: color 0.3s ease;
-}
-
-/* Input fields */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="date"] {
+/* Input field */
+.input-icon input[type="text"],
+.input-icon input[type="email"],
+.input-icon input[type="password"] {
     width: 100%;
-    padding: 12px 15px 12px 45px;
-    border: 2px solid #d4af37;
+    padding: 12px 15px 12px 48px; /* Padding trái để chừa chỗ cho icon */
+    border: 2px solid #5ee7df;
     border-radius: 30px;
-    font-size: 18px; /* thay 18px giữ nguyên */
+    font-size: 18px;
     font-weight: 600;
     outline: none;
-    background: #fffef9;
-    color: #5a3e00;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(255, 255, 255, 0.7);
+    color: #0a3d62;
+    transition: border 0.3s, box-shadow 0.3s;
+    margin-bottom: 0;
+    box-sizing: border-box; /* Quan trọng để không bị tràn khung */
 }
-input::placeholder {
-    font-size: 18px; /* thay 18px giữ nguyên */
+
+/* Nếu là password thì thêm padding phải cho icon mắt */
+.input-icon input[type="password"] {
+    padding-right: 48px; /* Ensure space for the eye icon on the right */
+}
+
+/* Placeholder style */
+.input-icon input::placeholder {
+    font-size: 18px;
     font-weight: 600;
-    color: #b8860b;
+    color: #2193b0;
     opacity: 1;
 }
 
-input:focus {
-    border-color: #b8860b;
-    box-shadow: 0 0 8px 1px rgba(184, 134, 11, 0.5);
+/* Focus style */
+.input-icon input:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 8px 1px rgba(33, 147, 176, 0.18);
 }
 
+/* Icon bên trái (user, mail, lock) */
+.input-icon i.fa:not(.toggle-password) {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2193b0;
+    font-size: 18px;
+    transition: color 0.3s;
+    z-index: 2;
+}
+
+
+/* Khi input focus/hover, icon đổi màu */
 .input-icon input:focus + i,
 .input-icon input:hover + i {
-    color: #8b6d02;
+    color: #0a3d62;
 }
 
-/* Toggle password icon bên phải */
-.input-icon .toggle-password {
+/* Icon MẮT bên phải */
+.toggle-password {
     position: absolute;
-    right: 15px;
+    right: 18px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #b8860b;
-    font-size: 18px; /* thay 1.1rem ≈ 18px */
-    transition: color 0.3s ease;
-    user-select: none;
-    z-index: 2;
-    margin-left: 70%; /* loại bỏ margin-left 70% vì % là đơn vị tương đối */
-}
-
-/* Gender radio */
-.gender-group {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 25px;
-}
-
-.gender-option {
-    font-size: 18px; /* thay 1.1rem ≈ 18px */
-    color: #5a3e00;
-    cursor: pointer;
-    user-select: none;
+    color: #2193b0;
+    font-size: 20px;
+    z-index: 3;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
 }
 
-.gender-option input[type="radio"] {
-    cursor: pointer;
+
+/* Hover icon mắt */
+.toggle-password:hover {
+    color: #0a3d62;
 }
 
-/* Submit button */
-input[type="submit"] {
-    background: #b8860b;
+
+/* Sign Up Button with Ripple/Wave Effect */
+.signUp-btn {
+    background: linear-gradient(90deg, #5ee7df 0%, #2193b0 100%);
     color: #fff;
     font-weight: 700;
-    font-size: 19px; /* thay 1.2rem ≈ 19px */
+    font-size: 19px;
     padding: 12px 0;
     border: none;
     border-radius: 30px;
     width: 100%;
     cursor: pointer;
-    transition: background 0.3s ease;
-    box-shadow: 0 5px 12px rgba(184, 134, 11, 0.5);
+    transition: background 0.3s, box-shadow 0.3s;
+    box-shadow: 0 5px 12px rgba(33,147,176,0.18);
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
 }
-
-input[type="submit"]:hover {
-    background: #8b6d02;
-    box-shadow: 0 6px 14px rgba(139, 109, 2, 0.8);
+.signUp-btn:hover {
+    background: linear-gradient(90deg, #2193b0 0%, #5ee7df 100%);
+    box-shadow: 0 6px 16px rgba(33,147,176,0.25);
 }
-
-/* Thông báo lỗi - FIX CỨNG CHIỀU CAO */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    background-color: rgba(33,147,176,0.25);
+    pointer-events: none;
+    width: 80px;
+    height: 80px;
+    left: 50%;
+    top: 50%;
+    margin-left: -40px;
+    margin-top: -40px;
+    z-index: 2;
+}
+@keyframes ripple {
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+/* Error Message */
 .error-message {
-    height: 24px;
-    line-height: 24px;
-    font-weight: bold;
-    color: crimson;
-    text-align: center;
-    margin-top: 18px;
+    background-color: rgba(255, 243, 205, 0.9); /* vàng nhạt trong suốt */
+    color: #d9534f; /* đỏ nhạt */
+    border-left: 4px solid #f0ad4e; /* cam nhạt */
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 1px 6px rgba(240, 173, 78, 0.2);
+    animation: fadeIn 0.4s ease-in-out;
+    text-align: left;
 }
 
-/* Link đăng nhập */
-.form-container p a {
-    color: #b8860b;
+/* Animation xuất hiện */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Login Link */
+.login-link p a {
+    color: #2193b0;
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s;
 }
-
-.form-container p a:hover {
-    color: #8b6d02;
+.login-link p a:hover {
+    color: #0a3d62;
     text-decoration: underline;
+}
+/* Responsive Design */
+@media (max-width: 600px) {
+    .form-bubble {
+        padding: 22px 8vw 18px 8vw;
+        width: 98vw;
+        min-width: unset;
+    }
+    .signup-header, .signup-footer {
+        font-size: 1.2rem;
+    }
+    .bubble-title {
+        font-size: 1.3rem;
+    }
+    .fish1, .fish2 {
+        width: 40px;
+    }
+    .coral-left, .coral-right {
+        width: 50px; height: 40px;
+    }
+    .seaweed-left, .seaweed-right {
+        width: 20px; height: 40px;
+    }
 }
