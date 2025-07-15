@@ -15,7 +15,6 @@ body {
     position: relative;
 }
 
-/* Static background particles */
 body::before {
     content: '';
     position: fixed;

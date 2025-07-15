@@ -147,11 +147,7 @@ public class UserDAO {
         }
     }
 
-    /**
-     * Checks if a user exists by email.
-     * @param email the email to check
-     * @return true if user exists, false otherwise
-     */
+    
     public static boolean userExistsByEmail(String email) {
         String sql = "SELECT 1 FROM Users WHERE email = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -167,7 +163,6 @@ public class UserDAO {
 
     public static void main(String[] args) {
         try {
-            // In ra connection string để kiểm tra DB
             java.sql.Connection conn = util.DBConnection.getConnection();
             System.out.println("Connected to DB: " + conn.getMetaData().getURL());
             conn.close();

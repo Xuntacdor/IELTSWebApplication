@@ -37,10 +37,10 @@
         <!-- Glassy Bubble Form -->
         <div class="form-bubble-container">
             <form class="form-bubble" action="${pageContext.request.contextPath}/SignUpController" method="post" autocomplete="off">
-                <h2 class="bubble-title">Đăng ký tài khoản</h2>
+                <h2 class="bubble-title">Sign Up</h2>
                 <div class="input-icon">
                     <i class="fa fa-user"></i>
-                    <input type="text" name="name" placeholder="Họ và tên" required>
+                    <input type="text" name="name" placeholder="Full Name" required>
                 </div>
                 <div class="input-icon">
                     <i class="fa fa-envelope"></i>
@@ -48,31 +48,31 @@
                 </div>
                 <div class="input-icon">
                     <i class="fa fa-lock"></i>
-                    <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
                     <i class="fa fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
                 </div>
                 <div class="input-icon">
                     <i class="fa fa-lock"></i>
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmed Password" required>
                     <i class="fa fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
                 </div>
                 <div class="input-icon">
                     <i class="fa fa-venus-mars"></i>
-                    <select name="gender" required style="width:100%;padding:12px 15px 12px 48px;border:2px solid #5ee7df;border-radius:30px;font-size:18px;font-weight:600;background:rgba(255,255,255,0.7);color:#0a3d62;outline:none;">
-                        <option value="">Chọn giới tính</option>
-                        <option value="male">Nam</option>
-                        <option value="female">Nữ</option>
-                        <option value="other">Khác</option>
+                    <select name="gender" required>
+                        <option value="" disabled selected hidden>Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
                     </select>
                 </div>
+
                 <div class="input-icon">
                     <i class="fa fa-calendar"></i>
-                    <input type="date" name="dateOfBirth" placeholder="Ngày sinh" required>
+                    <input type="date" name="dateOfBirth" required />
                 </div>
-                <button type="submit" class="signUp-btn">Đăng ký</button>
-                <div class="error-message"></div>
+
+                <button type="submit" class="signUp-btn">Sign Up</button>
                 <div class="login-link">
-                    <p><a href="${pageContext.request.contextPath}/View/Login.jsp">Đã có tài khoản? Đăng nhập</a></p>
+                    <p><a href="${pageContext.request.contextPath}/View/Login.jsp">Already have an account? Login</a></p>
                 </div>
             </form>
         </div>

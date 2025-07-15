@@ -62,7 +62,6 @@
         <script>
             window.contextPath = '${pageContext.request.contextPath}';
         </script>
-
         <script src="${pageContext.request.contextPath}/js/FishTank.js"></script>
     </body>
 </html>
