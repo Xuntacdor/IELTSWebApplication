@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const passwordInput = document.querySelector('input[name="password"]');
     const confirmPasswordInput = document.querySelector('input[name="confirmPassword"]');
     const nameInput = document.querySelector('input[name="name"]');
+    const genderInput = document.querySelector('select[name="gender"]');
+    const dobInput = document.querySelector('input[name="dateOfBirth"]');
 
     const form = document.querySelector('.form-bubble');
     const signUpBtn = form.querySelector('.signUp-btn');
@@ -57,30 +59,40 @@ document.addEventListener('DOMContentLoaded', function () {
         const password = passwordInput.value;
 
         if (!nameInput.value.trim()) {
-            showError('Please enter your full name.');
+            showError('Vui lòng nhập họ và tên.');
             return false;
         }
 
         if (!validateEmail(emailInput.value)) {
-            showError('Please enter a valid email address.');
+            showError('Vui lòng nhập email hợp lệ.');
             return false;
         }
 
         if (!password) {
-            showError('Please enter a password.');
+            showError('Vui lòng nhập mật khẩu.');
             return false;
         }
 
-        // ✅ Regex kiểm tra password mạnh
+        // Regex kiểm tra password mạnh
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
         if (!strongPasswordRegex.test(password)) {
-            showError('Password must be at least 8 characters, and include uppercase, lowercase, number, and special character.');
+            showError('Mật khẩu phải tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.');
             return false;
         }
 
         if (password !== confirmPasswordInput.value) {
-            showError('Passwords do not match.');
+            showError('Mật khẩu xác nhận không khớp.');
+            return false;
+        }
+
+        if (!genderInput.value) {
+            showError('Vui lòng chọn giới tính.');
+            return false;
+        }
+
+        if (!dobInput.value) {
+            showError('Vui lòng chọn ngày sinh.');
             return false;
         }
 
@@ -130,7 +142,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+    // 7. Hiển thị lỗi server (nếu có)
+    if (typeof serverError !== 'undefined' && serverError.trim() !== "") {
+        showError(serverError);
+    }
 });
+
 
 // Ripple effect CSS (inject if not present)
 (function () {

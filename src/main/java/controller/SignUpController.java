@@ -27,40 +27,69 @@ public class SignUpController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String gender = request.getParameter("gender");
-        String dobStr = request.getParameter("dateOfBirth"); 
+        String dobStr = request.getParameter("dateOfBirth");
 
-        // Check if user already exists by email
-        if (UserDAO.userExistsByEmail(email)) {
-            request.setAttribute("error", "A user with this email already exists!");
+        // Validate fields
+        if (fullName == null || fullName.trim().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập họ và tên.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập email.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (password == null || password.isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập mật khẩu.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (confirmPassword == null || confirmPassword.isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập lại mật khẩu.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (!password.equals(confirmPassword)) {
+            request.setAttribute("error", "Mật khẩu xác nhận không khớp.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (gender == null || gender.isEmpty()) {
+            request.setAttribute("error", "Vui lòng chọn giới tính.");
+            request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
+            return;
+        }
+        if (dobStr == null || dobStr.isEmpty()) {
+            request.setAttribute("error", "Vui lòng chọn ngày sinh.");
             request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
             return;
         }
 
-        if (!password.equals(confirmPassword)) {
-            request.setAttribute("error", "Confirm password does not match!");
+        // Check if user already exists by email
+        if (UserDAO.userExistsByEmail(email)) {
+            request.setAttribute("error", "Email đã được sử dụng!");
             request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
             return;
         }
 
         try {
-            LocalDate dob = LocalDate.parse(dobStr);
-            Date sqlDob = Date.valueOf(dob);
+            java.time.LocalDate dob = java.time.LocalDate.parse(dobStr);
+            java.sql.Date sqlDob = java.sql.Date.valueOf(dob);
 
             String sql = "INSERT INTO Users (full_name, email, password_hash, gender, date_of_birth) VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+            try (java.sql.Connection conn = util.DBConnection.getConnection(); java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, fullName);
                 stmt.setString(2, email);
-                stmt.setString(3, password); 
+                stmt.setString(3, password); // TODO: hash password in production
                 stmt.setString(4, gender);
                 stmt.setDate(5, sqlDob);
                 stmt.executeUpdate();
             }
-
             response.sendRedirect("View/Login.jsp");
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Registration failed: " + e.getMessage());
+            String msg = (e.getMessage() == null || e.getMessage().trim().isEmpty()) ? "Đăng ký thất bại. Vui lòng thử lại sau." : ("Đăng ký thất bại: " + e.getMessage());
+            request.setAttribute("error", msg);
             request.getRequestDispatcher("/View/SignUp.jsp").forward(request, response);
         }
     }
