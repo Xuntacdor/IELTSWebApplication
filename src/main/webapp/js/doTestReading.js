@@ -63,42 +63,87 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Handle text selection highlight popup
-    document.addEventListener("mouseup", function (e) {
-    const selection = window.getSelection();
-    const text = selection.toString().trim();
+    // === Highlight Mode Logic ===
+    let highlightMode = false;
+    const highlightBtn = document.getElementById("highlightModeBtn");
     const highlightMenu = document.getElementById("highlightMenu");
 
-    if (text.length > 0) {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+    highlightBtn.addEventListener("click", function() {
+        highlightMode = !highlightMode;
+        highlightBtn.classList.toggle("active", highlightMode);
+        document.querySelectorAll('.passage-text').forEach(el => {
+            if (highlightMode) {
+                el.classList.add('highlight-mode');
+            } else {
+                el.classList.remove('highlight-mode');
+            }
+        });
+        if (!highlightMode) {
+            highlightMenu.style.display = "none";
+        }
+    });
 
-        if (e.target.closest(".passage-text")) {
-            highlightMenu.style.display = "block";
-            highlightMenu.style.left = `${rect.left + window.scrollX}px`;
-            highlightMenu.style.top = `${rect.top + window.scrollY - 40}px`;
+    // Show highlight menu only in highlight mode and only for .passage-text
+
+    document.addEventListener("mouseup", function (e) {
+        if (!highlightMode) {
+            highlightMenu.style.display = "none";
+            return;
+        }
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        if (text.length > 0) {
+            // Only show if selection is inside .passage-text
+            let node = selection.anchorNode;
+            let passage = node ? (node.nodeType === 3 ? node.parentElement : node) : null;
+            passage = passage ? passage.closest('.passage-text') : null;
+            if (passage) {
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+                highlightMenu.style.display = "block";
+                highlightMenu.style.left = `${rect.left + window.scrollX}px`;
+                highlightMenu.style.top = `${rect.top + window.scrollY - 40}px`;
+            } else {
+                highlightMenu.style.display = "none";
+            }
         } else {
             highlightMenu.style.display = "none";
         }
-    } else {
-        highlightMenu.style.display = "none";
-    }
-});
+    });
 
-document.getElementById("highlightMenu").addEventListener("click", () => {
-    const selection = window.getSelection();
-    const text = selection.toString();
-    if (text.length > 0) {
-        const range = selection.getRangeAt(0);
-        const span = document.createElement("span");
-        span.className = "highlighted";
-        span.textContent = text;
-        range.deleteContents();
-        range.insertNode(span);
-        window.getSelection().removeAllRanges();
-        document.getElementById("highlightMenu").style.display = "none";
-    }
-});
+    highlightMenu.addEventListener("click", function() {
+        const selection = window.getSelection();
+        const text = selection.toString();
+        if (text.length > 0) {
+            let node = selection.anchorNode;
+            let passage = node ? (node.nodeType === 3 ? node.parentElement : node) : null;
+            passage = passage ? passage.closest('.passage-text') : null;
+            if (passage) {
+                // Replace selected text with highlighted span
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                span.className = 'highlighted';
+                span.textContent = text;
+                range.deleteContents();
+                range.insertNode(span);
+            }
+            window.getSelection().removeAllRanges();
+            highlightMenu.style.display = "none";
+        }
+    });
+
+    // === Unhighlight logic ===
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('highlighted')) {
+            // Only allow unhighlight inside passage-text
+            const passage = e.target.closest('.passage-text');
+            if (passage) {
+                const span = e.target;
+                const text = document.createTextNode(span.textContent);
+                span.parentNode.replaceChild(text, span);
+            }
+        }
+    });
 
 
 });

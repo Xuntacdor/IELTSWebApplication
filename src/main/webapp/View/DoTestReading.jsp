@@ -20,6 +20,7 @@
             <div class="test-tools">
                 <span id="timer" class="tool-btn">⏱ 00:00</span>
                 <button id="settingsBtn" class="tool-btn">⚙️</button>
+                <button id="highlightModeBtn" class="tool-btn" type="button">🖍️ Highlight</button>
                 <button id="exitBtn" class="tool-btn">❌</button>
             </div>
         </div>
@@ -52,9 +53,10 @@
                 <div class="left-panel">
                     <div class="section-box">
                         <h3>📄 Section <%= sectionNum%>: <%= p.getTitle()%></h3>
-                        <div class="passage-text">
-                            <%= p.getContent()%>
+                        <div class="passage-text" data-passage-id="<%= p.getPassageId() %>">
+                            <%= p.getContent().replaceAll("\\r?\\n", "<br/>")%>
                         </div>
+
 
                     </div>
                 </div>
