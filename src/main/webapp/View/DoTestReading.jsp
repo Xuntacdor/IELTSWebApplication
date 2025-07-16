@@ -15,7 +15,30 @@
             Map<Integer, List<Answer>> questionAnswers = (Map<Integer, List<Answer>>) request.getAttribute("questionAnswers");
         %>
 
-        <h2 style="margin: 20px;">📖 Reading Test: <%= exam.getTitle()%></h2>
+        <div class="test-header">
+            <h2>📖 Reading Test: <%= exam.getTitle()%></h2>
+            <div class="test-tools">
+                <span id="timer" class="tool-btn">⏱ 00:00</span>
+                <button id="settingsBtn" class="tool-btn">⚙️</button>
+                <button id="exitBtn" class="tool-btn">❌</button>
+            </div>
+        </div>
+        <div id="highlightMenu" >
+            ✏️ Highlight
+        </div>
+
+        <div id="settingsMenu" style="display:none; position:fixed; top:80px; right:20px; background:#fff; border:1px solid #ccc; padding:10px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.2); z-index:999;">
+            <label><input type="checkbox" id="eyeProtection"> 👁 Eye Protection Mode</label><br>
+            <label>🔠 Font Size:
+                <select id="fontSizeSelector">
+                    <option value="16">Small</option>
+                    <option value="18" selected>Medium</option>
+                    <option value="22">Large</option>
+                </select>
+            </label>
+        </div>
+
+
 
         <form action="${pageContext.request.contextPath}/SubmitTestServlet" method="post">
             <input type="hidden" name="examId" value="<%= examId%>" />
@@ -29,7 +52,10 @@
                 <div class="left-panel">
                     <div class="section-box">
                         <h3>📄 Section <%= sectionNum%>: <%= p.getTitle()%></h3>
-                        <div class="passage-text"><%= p.getContent()%></div>
+                        <div class="passage-text">
+                            <%= p.getContent()%>
+                        </div>
+
                     </div>
                 </div>
 
@@ -64,7 +90,7 @@
                             <%= label++%>. <%= o.getAnswerText()%>
                         </label><br/>
                         <% }
-                } else {%>
+                        } else {%>
                         <p style="color:red;">❗ No options for question ID <%= qId%></p>
                         <% }
                                 break;
@@ -99,7 +125,7 @@
                         <div class="summary-block">
                             <p><strong><%= q.getQuestionText()%></strong></p>
                             <% for (int i = 0; i < scCount; i++) {%>
-     
+
                             <input type="text" name="answer_<%= qId%>_<%= i%>" placeholder="Your answer"><br/>
                             <% } %>
                         </div>
@@ -150,7 +176,7 @@
                         <p><strong><%= q.getQuestionText() != null ? q.getQuestionText() : "Which paragraph contains the following information?"%></strong></p>
                         <div class="matching-information-list">
                             <% for (int i = 0; i < infoAnswers.size(); i++) {
-                            String infoText = infoAnswers.get(i).getAnswerText();%>
+                                    String infoText = infoAnswers.get(i).getAnswerText();%>
                             <div style="margin-bottom: 10px;">
                                 <label><%= (i + 1)%>. <%= infoText%></label><br/>
                                 <select name="answer_<%= qId%>_<%= i%>">
@@ -190,9 +216,10 @@
 
             <div class="section-nav">
                 <% for (Passage p : passages) {%>
-                <button type="button" class="section-btn" data-index="<%= p.getSection()%>">Section <%= p.getSection()%></button>
+                <span class="section-btn" data-index="<%= p.getSection()%>">Section <%= p.getSection()%></span>
                 <% }%>
             </div>
+
 
             <div style="text-align:center; margin-top: 20px;">
                 <input type="submit" value="Submit" class="btn-submit" />
@@ -200,25 +227,9 @@
         </form>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const buttons = document.querySelectorAll(".section-btn");
-                const sections = document.querySelectorAll(".section-content");
-
-                buttons.forEach(btn => {
-                    btn.addEventListener("click", function () {
-                        const index = this.getAttribute("data-index");
-                        sections.forEach(sec => sec.style.display = "none");
-                        document.getElementById("section-" + index).style.display = "flex";
-
-                        buttons.forEach(b => b.classList.remove("active"));
-                        this.classList.add("active");
-                    });
-                });
-
-                if (buttons.length > 0)
-                    buttons[0].classList.add("active");
-            });
+            const appContext = "<%= request.getContextPath()%>";
         </script>
+        <script src="<%= request.getContextPath()%>/js/doTestReading.js"></script>
 
     </body>
 </html>  
