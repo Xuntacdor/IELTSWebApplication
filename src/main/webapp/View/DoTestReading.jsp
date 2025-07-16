@@ -64,9 +64,48 @@
                 <div class="right-panel">
                     <h4>🔍 Questions for: <%= p.getTitle()%></h4>
                     <% if (questions != null) {
+                            int questionIndex = 1;
                             for (Question q : questions) {
-                                int qId = q.getQuestionId();
                                 String type = q.getQuestionType();
+                                int numAnswers = 1;
+                                List<Answer> answers = questionAnswers.get(q.getQuestionId());
+                                if (answers != null) {
+                                    numAnswers = answers.size();
+                                }
+
+                                // Types that are always single-numbered
+                                if (type.equals("MULTIPLE_CHOICE") ||
+                                    type.equals("TRUE_FALSE_NOT_GIVEN") ||
+                                    type.equals("YES_NO_NOT_GIVEN") ||
+                                    type.equals("SHORT_ANSWER") ||
+                                    type.equals("SENTENCE_COMPLETION")) {
+
+                                    // Label: "Question X:"
+                                    out.print("Question " + questionIndex + ":");
+                                    // ... render the question ...
+                                    questionIndex++; // increment by 1
+
+                                // Types that are grouped by number of answers
+                                } else if (type.equals("SUMMARY_COMPLETION") ||
+                                           type.equals("TABLE_COMPLETION") ||
+                                           type.equals("FLOWCHART") ||
+                                           type.equals("DIAGRAM_LABELING") ||
+                                           type.equals("MATCHING") ||
+                                           type.equals("MATCHING_ENDINGS")) {
+
+                                    if (numAnswers == 1) {
+                                        out.print("Question " + questionIndex + ":");
+                                    } else {
+                                        out.print("Question " + questionIndex + "–" + (questionIndex + numAnswers - 1) + ":");
+                                    }
+                                    // ... render the group of answer boxes ...
+                                    questionIndex += numAnswers; // increment by number of answer boxes
+
+                                } else {
+                                    // Default fallback: treat as single
+                                    out.print("Question " + questionIndex + ":");
+                                    questionIndex++;
+                                }
                     %>
                     <div class="question-box">
                         <% if (q.getInstruction() != null && !q.getInstruction().isEmpty()) {%>
@@ -77,23 +116,23 @@
                         <% } %>
                         <% switch (type) {
                                 case "MULTIPLE_CHOICE": {
-                                    List<Answer> answers = questionAnswers.get(qId);
+                                    
                         %>
                         <p><strong><%= q.getQuestionText()%></strong></p>
                         <%
                             if (answers != null) {
                                 char label = 'A';
                                 for (Answer o : answers) {
-                                    String inputId = "q_" + qId + "_" + label;
+                                    String inputId = "q_" + q.getQuestionId() + "_" + label;
                         %>
-                        <input type="checkbox" id="<%= inputId%>" name="answer_<%= qId%>[]"
+                        <input type="checkbox" id="<%= inputId%>" name="answer_<%= q.getQuestionId()%>[]"
                                value="<%= o.getAnswerText()%>" />
                         <label for="<%= inputId%>">
                             <%= label++%>. <%= o.getAnswerText()%>
                         </label><br/>
                         <% }
                         } else {%>
-                        <p style="color:red;">❗ No options for question ID <%= qId%></p>
+                        <p style="color:red;">❗ No options for question ID <%= q.getQuestionId()%></p>
                         <% }
                                 break;
                             }
@@ -101,7 +140,7 @@
                             case "YES_NO_NOT_GIVEN": {
                         %>
                         <p><strong><%= q.getQuestionText()%></strong></p>
-                        <select name="answer_<%= qId%>" style="
+                        <select name="answer_<%= q.getQuestionId()%>" style="
                                 width: 100%;
                                 max-width: 400px;
                                 padding: 15px 20px;
@@ -121,20 +160,20 @@
                         <% break;
                             }
                             case "SUMMARY_COMPLETION": {
-                                List<Answer> scAnswers = questionAnswers.get(qId);
+                                List<Answer> scAnswers = questionAnswers.get(q.getQuestionId());
                                 int scCount = (scAnswers != null) ? scAnswers.size() : 1;
                         %>
                         <div class="summary-block">
                             <p><strong><%= q.getQuestionText()%></strong></p>
                             <% for (int i = 0; i < scCount; i++) {%>
 
-                            <input type="text" name="answer_<%= qId%>_<%= i%>" placeholder="Your answer"><br/>
+                            <input type="text" name="answer_<%= q.getQuestionId()%>_<%= i%>" placeholder="Your answer"><br/>
                             <% } %>
                         </div>
                         <% break;
                             }
                             case "MATCHING_HEADINGS": {
-                                List<Answer> allAnswers = questionAnswers.get(qId);
+                                List<Answer> allAnswers = questionAnswers.get(q.getQuestionId());
                                 if (allAnswers != null) {
                                     List<String> headings = new ArrayList<>();
                                     for (Answer a : allAnswers) {
@@ -160,7 +199,7 @@
                         <p><strong>Choose the correct heading for each section:</strong></p>
                         <div class="matching-headings-grid">
                             <% for (int i = 0; i < sectionLabels.size(); i++) {%>
-                            <select name="answer_<%= qId%>_<%= i%>">
+                            <select name="answer_<%= q.getQuestionId()%>_<%= i%>">
                                 <option value=""><%= sectionLabels.get(i)%></option>
                                 <% for (String h : headings) {%>
                                 <option value="<%= h%>"><%= h%></option>
@@ -172,7 +211,7 @@
                                 break;
                             }
                             case "MATCHING_INFORMATION": {
-                                List<Answer> infoAnswers = questionAnswers.get(qId);
+                                List<Answer> infoAnswers = questionAnswers.get(q.getQuestionId());
                                 if (infoAnswers != null) {
                         %>
                         <p><strong><%= q.getQuestionText() != null ? q.getQuestionText() : "Which paragraph contains the following information?"%></strong></p>
@@ -181,7 +220,7 @@
                                     String infoText = infoAnswers.get(i).getAnswerText();%>
                             <div style="margin-bottom: 10px;">
                                 <label><%= (i + 1)%>. <%= infoText%></label><br/>
-                                <select name="answer_<%= qId%>_<%= i%>">
+                                <select name="answer_<%= q.getQuestionId()%>_<%= i%>">
                                     <option value="">-- Select Paragraph --</option>
                                     <option value="A">A</option><option value="B">B</option><option value="C">C</option>
                                     <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
@@ -197,17 +236,17 @@
                             case "TABLE_COMPLETION":
                             case "FLOWCHART":
                             case "DIAGRAM_LABELING": {
-                                List<Answer> genericAnswers = questionAnswers.get(qId);
+                                List<Answer> genericAnswers = questionAnswers.get(q.getQuestionId());
                                 int genericCount = (genericAnswers != null) ? genericAnswers.size() : 1;
                                 for (int i = 0; i < genericCount; i++) {
                         %>
-                        <input type="text" name="answer_<%= qId%>_<%= i%>" placeholder="Your answer"><br/>
+                        <input type="text" name="answer_<%= q.getQuestionId()%>_<%= i%>" placeholder="Your answer"><br/>
                         <% }
                                 break;
                             }
                             default:%>
                         <p><%= q.getQuestionText().replaceAll("<", "&lt;").replaceAll(">", "&gt;")%></p>
-                        <input type="text" name="answer_<%= qId%>" placeholder="Your answer"><br/>
+                        <input type="text" name="answer_<%= q.getQuestionId()%>" placeholder="Your answer"><br/>
                         <% } %>
                     </div>
                     <% } %>
