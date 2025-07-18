@@ -41,19 +41,27 @@
                     <form class="form_container" action="${pageContext.request.contextPath}/LoginController" method="post">
                         <div class="input_group">
                             <img src="${pageContext.request.contextPath}/Sources/LoginSources/user.png" class="input_icon" alt="user" />
-                            <input type="text" placeholder="Email" name="email"/>
+                            <input type="text" placeholder="Email" name="email" value="${email != null ? email : ''}" />
                         </div>
 
                         <div class="input_group">
                             <img src="${pageContext.request.contextPath}/Sources/LoginSources/lock.png" class="input_icon" alt="lock" />
-                            <input type="password" placeholder="Password" name="password"/>
+                            <input type="password" placeholder="Password" name="password" value="${password != null ? password : ''}" />
                         </div>
 
                         <c:if test="${not empty error}">
                             <p style="color: red;">${error}</p>
                         </c:if>
+                        <!-- REMEMBER ME CHECKBOX -->
+                        <div class="remember-me-container" style="display: flex; align-items: center; margin-top: 10px;">
+                            <input type="checkbox" id="rememberMe" name="rememberMe" style="margin-right: 5px;" 
+                                   ${email != null ? "checked" : ""} />
 
-                        <a href="#" id="forgot-link">Forgot your password?</a><br>
+                            <label for="rememberMe" style="margin: 0;">Remember Me</label>
+                        </div>
+                        <!-- FORGOT PASSWORD LINK -->
+                        <a href="${pageContext.request.contextPath}/View/forgot-password.jsp" id="forgot-link">Forgot your password?</a>
+                        <br>
                         <button type="submit" class="signIn-btn">Sign In</button>
                     </form>
                 </div>
@@ -63,5 +71,11 @@
             window.contextPath = '${pageContext.request.contextPath}';
         </script>
         <script src="${pageContext.request.contextPath}/js/FishTank.js"></script>
+        <c:if test="${param.resetSuccess == 'true'}">
+            <script>
+            alert("Your password has been reset successfully. Please log in with your new password.");
+            </script>
+        </c:if>
+
     </body>
 </html>

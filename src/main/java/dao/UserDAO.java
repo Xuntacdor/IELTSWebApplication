@@ -147,7 +147,6 @@ public class UserDAO {
         }
     }
 
-    
     public static boolean userExistsByEmail(String email) {
         String sql = "SELECT 1 FROM Users WHERE email = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -155,6 +154,69 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static User getUserByEmail(String email) {
+        String sql = "SELECT * FROM Users WHERE email = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setGender(rs.getString("gender"));
+                user.setDateOfBirth(rs.getString("date_of_birth"));
+                user.setRole(rs.getString("role"));
+                user.setActive(rs.getBoolean("is_active"));
+                user.setPhoneNumber(rs.getString("phone_number"));
+                user.setCamBalance(rs.getInt("cam_balance"));
+                user.setIsPremium(rs.getBoolean("is_premium"));
+                user.setPremiumExpiredAt(rs.getString("premium_expired_at"));
+                return user;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static User insertGoogleUser(String email, String fullName, String avatarUrl) {
+        String sql = "INSERT INTO Users (email, full_name, password_hash, avatar_url, role, is_active, cam_balance, is_premium) "
+                + "VALUES (?, ?, ?, ?, 'user', 1, 0, 0)";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, email);
+            stmt.setString(2, fullName);
+            stmt.setString(3, "GOOGLE_LOGIN"); // đặt giá trị mặc định không dùng
+            stmt.setString(4, avatarUrl);
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    int userId = rs.getInt(1);
+                    return getUserById(userId);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean updatePasswordByEmail(String email, String newPassword) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "UPDATE Users SET password_hash = ? WHERE email = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newPassword); // nên hash nếu muốn bảo mật
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

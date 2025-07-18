@@ -160,7 +160,7 @@ body {
     color: #0a3d62;
     transition: border 0.3s, box-shadow 0.3s;
     margin-bottom: 0;
-    box-sizing: border-box; /* Quan trọng để không bị tràn khung */
+    box-sizing: border-box;
 }
 
 /* Nếu là password thì thêm padding phải cho icon mắt */

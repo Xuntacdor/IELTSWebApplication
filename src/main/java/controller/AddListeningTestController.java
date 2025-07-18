@@ -2,21 +2,18 @@ package controller;
 
 import dao.*;
 import model.*;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@WebServlet(name = "AddListeningTestServlet", urlPatterns = {"/AddListeningTestServlet"})
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024,
-        maxFileSize = 50 * 1024 * 1024,
-        maxRequestSize = 100 * 1024 * 1024
-)
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+@WebServlet(name = "AddListeningTestController", urlPatterns = {"/AddListeningTestController"})
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 10 * 1024 * 1024)
 public class AddListeningTestController extends HttpServlet {
 
     private final ExamDAO examDAO = new ExamDAO();
@@ -28,121 +25,192 @@ public class AddListeningTestController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
 
-        String examTitle = request.getParameter("examTitle");
-        Part audioPart = request.getPart("fullAudio");
-
-        if (examTitle == null || examTitle.trim().isEmpty()) {
-            response.sendRedirect("addListeningTest.jsp?error=missingTitle");
-            return;
-        }
-
-        // ✅ Lưu audio
-        String audioUrl = "";
-        if (audioPart != null && audioPart.getSize() > 0) {
-            String fileName = System.currentTimeMillis() + "_" + audioPart.getSubmittedFileName();
-            String uploadPath = getServletContext().getRealPath("/uploads/audio");
-            File dir = new File(uploadPath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            audioPart.write(uploadPath + File.separator + fileName);
-            audioUrl = "uploads/audio/" + fileName;
-        }
-
-        // ✅ Tạo Exam
-        Exam exam = new Exam();
-        exam.setTitle(examTitle);
-        exam.setType("LISTENING");
-        exam.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        int examId = examDAO.insertExam(exam);
-
-        // ✅ Duyệt từng Section
-        for (int s = 1;; s++) {
-            String sectionTitle = request.getParameter("sectionTitle" + s);
-            String sectionContent = request.getParameter("sectionContent" + s);
-            if (sectionTitle == null && sectionContent == null) {
-                break;
+        try {
+            System.out.println("[AddListeningTestController] Start doPost");
+            String examTitle = request.getParameter("examTitle");
+            String examType = request.getParameter("category");
+            System.out.println("Exam title: " + examTitle + ", type: " + examType);
+            if (examTitle == null || examTitle.isEmpty() || examType == null || examType.isEmpty()) {
+                System.out.println("Missing exam info");
+                response.sendRedirect("View/addListeningTest.jsp?error=MissingExamInfo");
+                return;
             }
 
-            Passage passage = new Passage();
-            passage.setTitle(sectionTitle);
-            passage.setContent(sectionContent);
-            passage.setType("LISTENING");
-            passage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            passage.setExamId(examId);
-            passage.setAudioUrl(audioUrl);
-            int passageId = passageDAO.insertPassage(passage);
+            // Insert exam
+            Exam exam = new Exam();
+            exam.setTitle(examTitle.trim());
+            exam.setType(examType);
+            exam.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            int examId = examDAO.insertExam(exam);
+            System.out.println("Inserted examId: " + examId);
 
-            for (int q = 1;; q++) {
-                String questionType = request.getParameter("type_s" + s + "_q" + q);
-                if (questionType == null) {
-                    break;
-                }
-
-                String instruction = request.getParameter("instruction_s" + s + "_q" + q);
-                Part imagePart = request.getPart("image_s" + s + "_q" + q);
-
-                String imageUrl = "";
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    String rawName = imagePart.getSubmittedFileName();
-                    String fileName = "listen_s" + s + "_q" + q + "_" + System.currentTimeMillis() + "_" + rawName.replaceAll("\\s+", "_");
-                    String uploadPath = getServletContext().getRealPath("/uploads");
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
-                    imagePart.write(uploadPath + File.separator + fileName);
-                    imageUrl = "uploads/" + fileName;
-                }
-
-                int questionId = -1;
-
-                for (int i = 0;; i++) {
-                    String questionText = request.getParameter("questionText_s" + s + "_q" + q + "_i" + i);
-                    String answerText = request.getParameter("answers_s" + s + "_q" + q + "_i" + i);
-                    String isCorrectParam = request.getParameter("isCorrect_s" + s + "_q" + q + "_i" + i);
-
-                    if (questionText == null && answerText == null) {
+            String audioUrl = request.getParameter("examAudioPath");
+            if (audioUrl == null || audioUrl.trim().isEmpty()) {
+                System.out.println("❌ Không có audioUrl được chọn!");
+            } else {
+                System.out.println("✅ Audio URL nhận được: " + audioUrl);
+            }
+            System.out.println("Exam audioUrl: " + audioUrl);
+            if ("LISTENING_FULL".equals(examType)) {
+                // Lặp qua tất cả section
+                int sectionIdx = 1;
+                while (true) {
+                    String sectionName = request.getParameter("sectionName" + sectionIdx);
+                    String sectionTitle = request.getParameter("sectionTitle" + sectionIdx);
+                    System.out.println("Section " + sectionIdx + ": name=" + sectionName + ", title=" + sectionTitle);
+                    if (sectionName == null || sectionTitle == null) {
                         break;
                     }
+                    // Insert passage (section)
+                    Passage passage = new Passage();
+                    passage.setExamId(examId);
+                    passage.setSection(sectionIdx);
+                    passage.setTitle(sectionTitle);
+                    passage.setType("LISTENING");
+                    passage.setContent("");
+                    passage.setAudioUrl(audioUrl); // audio toàn bài
+                    passage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                    int passageId = passageDAO.insertPassage(passage);
+                    System.out.println("  Inserted passageId: " + passageId);
 
-                    boolean shouldCreateQuestion = questionId == -1 && ((questionText != null && !questionText.trim().isEmpty())
-                            || (!imageUrl.isEmpty() && answerText != null && !answerText.trim().isEmpty()));
-
-                    if (shouldCreateQuestion) {
+                    // Process all question groups for this section
+                    for (int groupId = 1; groupId <= 100; groupId++) {
+                        String groupType = request.getParameter("groupType_" + sectionIdx + "_" + groupId);
+                        if (groupType == null || groupType.isEmpty()) {
+                            continue;
+                        }
+                        String groupInstruction = request.getParameter("groupInstruction_" + sectionIdx + "_" + groupId);
+                        String imageUrl = uploadImageByGroup(request, sectionIdx, groupId);
+                        System.out.println("    Group " + groupId + ": type=" + groupType + ", instruction=" + groupInstruction + ", imageUrl=" + imageUrl);
+                        for (int q = 1; q <= 100; q++) {
+                            String questionText = request.getParameter("q_" + sectionIdx + "_" + groupId + "_" + q);
+                            if (questionText == null || questionText.trim().isEmpty()) {
+                                continue;
+                            }
+                            System.out.println("      Question " + q + ": " + questionText);
+                            Question question = new Question();
+                            question.setPassageId(passageId);
+                            question.setQuestionType(groupType);
+                            question.setInstruction(groupInstruction);
+                            question.setImageUrl(imageUrl);
+                            question.setNumberInPassage(-1);
+                            question.setExplanation("");
+                            question.setQuestionText(questionText.trim());
+                            int questionId = questionDAO.insertQuestion(question);
+                            System.out.println("        Inserted questionId: " + questionId);
+                            insertAnswersAndOptions(groupType, sectionIdx, groupId, q, questionId, request);
+                        }
+                    }
+                    sectionIdx++;
+                }
+            } else {
+                // LISTENING_SINGLE
+                int section = Integer.parseInt(request.getParameter("section"));
+                String sectionTitle = request.getParameter("sectionTitle");
+                String sectionName = request.getParameter("sectionName");
+                Passage passage = new Passage();
+                passage.setExamId(examId);
+                passage.setSection(section);
+                passage.setTitle(sectionTitle);
+                passage.setType("LISTENING");
+                passage.setContent("");
+                passage.setAudioUrl(audioUrl); // dùng chung audio
+                passage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                int passageId = passageDAO.insertPassage(passage);
+                System.out.println("  Inserted passageId: " + passageId);
+                for (int groupId = 1; groupId <= 100; groupId++) {
+                    String groupType = request.getParameter("groupType_" + groupId);
+                    if (groupType == null || groupType.isEmpty()) {
+                        continue;
+                    }
+                    String groupInstruction = request.getParameter("groupInstruction_" + groupId);
+                    String imageUrl = uploadImageByGroup(request, section, groupId);
+                    System.out.println("    Group " + groupId + ": type=" + groupType + ", instruction=" + groupInstruction + ", imageUrl=" + imageUrl);
+                    for (int q = 1; q <= 100; q++) {
+                        String questionText = request.getParameter("q_" + groupId + "_" + q);
+                        if (questionText == null || questionText.trim().isEmpty()) {
+                            continue;
+                        }
+                        System.out.println("      Question " + q + ": " + questionText);
                         Question question = new Question();
                         question.setPassageId(passageId);
-                        question.setQuestionType(questionType);
-                        question.setInstruction(instruction);
-                        question.setQuestionText(questionText != null ? questionText.trim() : "");
-                        question.setExplanation("");
-                        question.setNumberInPassage(-1);
+                        question.setQuestionType(groupType);
+                        question.setInstruction(groupInstruction);
                         question.setImageUrl(imageUrl);
-                        questionId = questionDAO.insertQuestion(question);
-                    }
-
-                    if (questionId != -1 && answerText != null && !answerText.trim().isEmpty()) {
-                        if ("MULTIPLE_CHOICE".equals(questionType)) {
-                            Option option = new Option();
-                            option.setQuestionId(questionId);
-                            option.setOptionLabel(String.valueOf((char) ('A' + i))); // A, B, C...
-                            option.setOptionText(answerText.trim());
-                            option.setIsCorrect(isCorrectParam != null);
-                            optionDAO.insertOption(option);
-                        } else {
-                            Answer answer = new Answer();
-                            answer.setQuestionId(questionId);
-                            answer.setAnswerText(answerText.trim());
-                            answerDAO.insertAnswer(answer);
-                        }
+                        question.setNumberInPassage(-1);
+                        question.setExplanation("");
+                        question.setQuestionText(questionText.trim());
+                        int questionId = questionDAO.insertQuestion(question);
+                        System.out.println("        Inserted questionId: " + questionId);
+                        insertAnswersAndOptions(groupType, section, groupId, q, questionId, request);
                     }
                 }
             }
+            System.out.println("[AddListeningTestController] Done, redirecting to addSuccess.jsp");
+            response.sendRedirect("View/addSuccess.jsp");
+        } catch (Exception e) {
+            System.out.println("[AddListeningTestController] Exception: " + e.getMessage());
+            e.printStackTrace();
+            response.sendRedirect("View/addListeningTest.jsp?error=InternalError");
         }
+    }
 
-        response.sendRedirect("addSuccess.jsp");
+    private String uploadImageByGroup(HttpServletRequest request, int sectionIdx, int groupId) throws IOException, ServletException {
+        for (Part part : request.getParts()) {
+            if (part.getName().equals("groupImage_" + sectionIdx + "_" + groupId) && part.getSize() > 0) {
+                String fileName = part.getSubmittedFileName().replaceAll("\\s+", "_");
+                // Không ghi file ra ổ C nữa, chỉ trả về tên file (giả sử bạn sẽ tự copy file vào web/Audio nếu cần)
+                return "Audio/" + fileName;
+            }
+        }
+        return null;
+    }
+
+    private void insertAnswersAndOptions(String type, int sectionIdx, int groupId, int q, int questionId, HttpServletRequest request) {
+        System.out.println("        [insertAnswersAndOptions] type=" + type + ", section=" + sectionIdx + ", group=" + groupId + ", q=" + q);
+        switch (type) {
+            case "MULTIPLE_CHOICE":
+                for (int i = 0;; i++) {
+                    String optText = request.getParameter("a_" + sectionIdx + "_" + groupId + "_" + q + "_" + i);
+                    if (optText == null || optText.trim().isEmpty()) {
+                        break;
+                    }
+                    boolean isCorrect = request.getParameter("correct_" + sectionIdx + "_" + groupId + "_" + q + "_" + i) != null;
+                    System.out.println("          Option " + i + ": " + optText + ", correct=" + isCorrect);
+                    Answer answer = new Answer();
+                    answer.setQuestionId(questionId);
+                    answer.setAnswerText(optText.trim());
+                    answer.setCorrect(isCorrect);
+                    answerDAO.insertAnswer(answer);
+                }
+                break;
+            case "MATCHING":
+                for (int i = 0; i < 10; i++) {
+                    String left = request.getParameter("matchQ_" + sectionIdx + "_" + groupId + "_" + q + "_" + i);
+                    String right = request.getParameter("matchA_" + sectionIdx + "_" + groupId + "_" + q + "_" + i);
+                    if (left != null && right != null && !left.trim().isEmpty() && !right.trim().isEmpty()) {
+                        System.out.println("          Matching " + i + ": " + left + " = " + right);
+                        Answer pair = new Answer();
+                        pair.setQuestionId(questionId);
+                        pair.setAnswerText(left.trim() + " = " + right.trim());
+                        pair.setCorrect(true);
+                        answerDAO.insertAnswer(pair);
+                    }
+                }
+                break;
+            default:
+                String answerText = request.getParameter("shortA_" + sectionIdx + "_" + groupId + "_" + q);
+                if (answerText != null && !answerText.trim().isEmpty()) {
+                    System.out.println("          Short answer: " + answerText);
+                    Answer a = new Answer();
+                    a.setQuestionId(questionId);
+                    a.setAnswerText(answerText.trim());
+                    a.setCorrect(true);
+                    answerDAO.insertAnswer(a);
+                }
+                break;
+        }
     }
 }

@@ -6,7 +6,6 @@
     <title>Add IELTS Listening Test</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/AddTest.css">
-    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
     <style>
         .section-btns button {
             margin-right: 10px;
@@ -19,7 +18,7 @@
     </style>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/AddExamServlet" method="post" enctype="multipart/form-data">
+<form action="${pageContext.request.contextPath}/AddListeningTestController" method="post" enctype="multipart/form-data">
     <div class="container mt-3">
         <label for="examTitle">📝 Exam Title:</label>
         <input type="text" name="examTitle" id="examTitle" class="form-control mb-3" required>
@@ -31,6 +30,24 @@
             <option value="LISTENING_SINGLE">Listening Single</option>
         </select>
 
+        <label>🎧 Audio File:</label>
+        <select name="examAudioPath" id="examAudioPath" class="form-select mb-3" required>
+            <option value="">-- Select Audio --</option>
+            <%
+                String audioDir = application.getRealPath("/Audio");
+                java.io.File dir = new java.io.File(audioDir);
+                String[] audioFiles = dir.list((d, name) -> name.toLowerCase().endsWith(".mp3") || name.toLowerCase().endsWith(".wav") || name.toLowerCase().endsWith(".ogg") || name.toLowerCase().endsWith(".webm"));
+                if (audioFiles != null) {
+                    for (String f : audioFiles) {
+            %>
+                <option value="Audio/<%=f%>"><%=f%></option>
+            <%
+                    }
+                }
+            %>
+        </select>
+
+        <!-- Section selector chỉ hiện khi LISTENING_FULL -->
         <div id="sectionSelector" class="section-btns mb-3" style="display: none;">
             <label class="mb-2">📂 Select Section:</label><br/>
             <input type="hidden" name="section" id="sectionHidden" value="1" />
@@ -43,21 +60,17 @@
 
     <div class="container-flex d-flex gap-3 px-3">
         <div class="left-panel w-50">
-            <h4>🎧 Section Info</h4>
-            <label>Section Title:</label>
-            <input type="text" name="sectionTitle" id="sectionTitle" class="form-control" required>
+            <h4>🎵 Section Info</h4>
 
-            <label class="mt-2">Section Audio:</label>
-            <input type="file" name="sectionAudio" id="sectionAudio" class="form-control" accept="audio/*">
+            <!-- Phần nhập cho SINGLE -->
+            <div id="singleAudioContainer" style="display: none">
+                <label>Section Title:</label>
+                <input type="text" name="sectionTitle" id="sectionTitle" class="form-control mb-2" required>
+            </div>
 
-            <label class="mt-2">Script (optional):</label>
-            <textarea name="sectionScript" id="sectionScript" rows="8" class="form-control"></textarea>
-        </div>
-
-        <div class="right-panel w-50">
-            <h4>🧠 Question Groups</h4>
-            <div id="questionGroupContainer"></div>
-            <button type="button" class="btn btn-primary mt-3" onclick="addQuestionGroup()">➕ Add Question Group</button>
+            <!-- Group cho Listening Full -->
+            <div id="sections-container"></div>
+            <button type="button" class="btn btn-primary mt-2" id="addSectionBtn" onclick="addListeningSection()" style="display: none">➕ Add Section</button>
         </div>
     </div>
 
@@ -66,39 +79,34 @@
     </div>
 </form>
 
+<!-- Script điều chỉnh hiển thị tùy theo loại bài test -->
 <script>
-    CKEDITOR.replace('sectionScript');
+    document.addEventListener("DOMContentLoaded", function () {
+        const examType = document.getElementById("examType");
+        const sectionSelector = document.getElementById("sectionSelector");
+        const addSectionBtn = document.getElementById("addSectionBtn");
+        const singleAudio = document.getElementById("singleAudioContainer");
 
-    const sections = {
-        1: { title: '', script: '', questions: '', audio: null },
-        2: { title: '', script: '', questions: '', audio: null },
-        3: { title: '', script: '', questions: '', audio: null },
-        4: { title: '', script: '', questions: '', audio: null }
-    };
-    let currentSection = 1;
+        function toggleSectionMode() {
+            const type = examType.value;
+            if (type === "LISTENING_FULL") {
+                sectionSelector.style.display = "block";
+                addSectionBtn.style.display = "inline-block";
+                singleAudio.style.display = "none";
+            } else {
+                sectionSelector.style.display = "none";
+                addSectionBtn.style.display = "none";
+                singleAudio.style.display = "block";
+            }
+        }
 
-    document.getElementById("examType").addEventListener("change", function () {
-        const show = this.value === "LISTENING_FULL";
-        document.getElementById("sectionSelector").style.display = show ? "block" : "none";
+        examType.addEventListener("change", toggleSectionMode);
+        toggleSectionMode(); // gọi ngay nếu có sẵn chọn
     });
-
-    function switchSection(num) {
-        // Lưu lại dữ liệu section hiện tại
-        sections[currentSection].title = document.getElementById("sectionTitle").value;
-        sections[currentSection].script = CKEDITOR.instances["sectionScript"].getData();
-        sections[currentSection].questions = document.getElementById("questionGroupContainer").innerHTML;
-        // Không lưu audio ở đây vì file input không thể set lại value qua JS
-
-        currentSection = num;
-        document.getElementById("sectionHidden").value = num;
-        document.getElementById("sectionTitle").value = sections[num].title || "";
-        CKEDITOR.instances["sectionScript"].setData(sections[num].script || "");
-        document.getElementById("questionGroupContainer").innerHTML = sections[num].questions || "";
-
-        document.querySelectorAll(".section-btns button").forEach(btn => btn.classList.remove("active"));
-        document.querySelector(`.section-btns button:nth-child(${num + 1})`).classList.add("active");
-    }
 </script>
+
+<!-- Các JS xử lý input động -->
 <script src="${pageContext.request.contextPath}/js/form-listening.js"></script>
+<script src="${pageContext.request.contextPath}/js/switch-section.js"></script>
 </body>
 </html>

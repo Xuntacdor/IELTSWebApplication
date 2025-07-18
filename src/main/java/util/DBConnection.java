@@ -8,7 +8,7 @@ public class DBConnection {
 
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=IELTSWebAppUnified;encrypt=true;trustServerCertificate=true";
     private static final String USER = "sa";
-    private static final String PASSWORD = "12345";
+    private static final String PASSWORD = "quangancut";
 
     public static Connection getConnection() throws SQLException {
         Connection conn = null;
