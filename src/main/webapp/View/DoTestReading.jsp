@@ -24,10 +24,10 @@
                 <button id="exitBtn" class="tool-btn">❌</button>
             </div>
         </div>
+
         <div id="highlightMenu" >
             ✏️ Highlight
         </div>
-
         <div id="settingsMenu" style="display:none; position:fixed; top:80px; right:20px; background:#fff; border:1px solid #ccc; padding:10px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.2); z-index:999;">
             <label><input type="checkbox" id="eyeProtection"> 👁 Eye Protection Mode</label><br>
             <label>🔠 Font Size:
@@ -53,7 +53,7 @@
                 <div class="left-panel">
                     <div class="section-box">
                         <h3>📄 Section <%= sectionNum%>: <%= p.getTitle()%></h3>
-                        <div class="passage-text" data-passage-id="<%= p.getPassageId() %>">
+                        <div class="passage-text" data-passage-id="<%= p.getPassageId()%>">
                             <%= p.getContent().replaceAll("\\r?\\n", "<br/>")%>
                         </div>
 
@@ -73,41 +73,33 @@
                                     numAnswers = answers.size();
                                 }
 
-                                // Types that are always single-numbered
-                                if (type.equals("MULTIPLE_CHOICE") ||
-                                    type.equals("TRUE_FALSE_NOT_GIVEN") ||
-                                    type.equals("YES_NO_NOT_GIVEN") ||
-                                    type.equals("SHORT_ANSWER") ||
-                                    type.equals("SENTENCE_COMPLETION")) {
+                                boolean isSingle = type.equals("MULTIPLE_CHOICE")
+                                        || type.equals("TRUE_FALSE_NOT_GIVEN")
+                                        || type.equals("YES_NO_NOT_GIVEN")
+                                        || type.equals("SHORT_ANSWER")
+                                        || type.equals("SENTENCE_COMPLETION");
+                                boolean isGroup = type.equals("SUMMARY_COMPLETION")
+                                        || type.equals("TABLE_COMPLETION")
+                                        || type.equals("FLOWCHART")
+                                        || type.equals("DIAGRAM_LABELING")
+                                        || type.equals("MATCHING")
+                                        || type.equals("MATCHING_ENDINGS");
 
-                                    // Label: "Question X:"
-                                    out.print("Question " + questionIndex + ":");
-                                    // ... render the question ...
-                                    questionIndex++; // increment by 1
-
-                                // Types that are grouped by number of answers
-                                } else if (type.equals("SUMMARY_COMPLETION") ||
-                                           type.equals("TABLE_COMPLETION") ||
-                                           type.equals("FLOWCHART") ||
-                                           type.equals("DIAGRAM_LABELING") ||
-                                           type.equals("MATCHING") ||
-                                           type.equals("MATCHING_ENDINGS")) {
-
+                                String label;
+                                if (isSingle) {
+                                    label = "Question " + questionIndex + ":";
+                                } else if (isGroup) {
                                     if (numAnswers == 1) {
-                                        out.print("Question " + questionIndex + ":");
+                                        label = "Question " + questionIndex + ":";
                                     } else {
-                                        out.print("Question " + questionIndex + "–" + (questionIndex + numAnswers - 1) + ":");
+                                        label = "Question " + questionIndex + "–" + (questionIndex + numAnswers - 1) + ":";
                                     }
-                                    // ... render the group of answer boxes ...
-                                    questionIndex += numAnswers; // increment by number of answer boxes
-
                                 } else {
-                                    // Default fallback: treat as single
-                                    out.print("Question " + questionIndex + ":");
-                                    questionIndex++;
+                                    label = "Question " + questionIndex + ":";
                                 }
                     %>
                     <div class="question-box">
+                        <p class="question-label"><%= label %></p>
                         <% if (q.getInstruction() != null && !q.getInstruction().isEmpty()) {%>
                         <p><strong><%= q.getInstruction()%></strong></p>
                         <% } %>
@@ -116,19 +108,18 @@
                         <% } %>
                         <% switch (type) {
                                 case "MULTIPLE_CHOICE": {
-                                    
                         %>
                         <p><strong><%= q.getQuestionText()%></strong></p>
                         <%
                             if (answers != null) {
-                                char label = 'A';
+                                char labelChar = 'A';
                                 for (Answer o : answers) {
-                                    String inputId = "q_" + q.getQuestionId() + "_" + label;
+                                    String inputId = "q_" + q.getQuestionId() + "_" + labelChar;
                         %>
                         <input type="checkbox" id="<%= inputId%>" name="answer_<%= q.getQuestionId()%>[]"
                                value="<%= o.getAnswerText()%>" />
                         <label for="<%= inputId%>">
-                            <%= label++%>. <%= o.getAnswerText()%>
+                            <%= labelChar++%>. <%= o.getAnswerText()%>
                         </label><br/>
                         <% }
                         } else {%>
@@ -163,13 +154,10 @@
                                 List<Answer> scAnswers = questionAnswers.get(q.getQuestionId());
                                 int scCount = (scAnswers != null) ? scAnswers.size() : 1;
                         %>
-                        <div class="summary-block">
-                            <p><strong><%= q.getQuestionText()%></strong></p>
-                            <% for (int i = 0; i < scCount; i++) {%>
-
-                            <input type="text" name="answer_<%= q.getQuestionId()%>_<%= i%>" placeholder="Your answer"><br/>
-                            <% } %>
-                        </div>
+                        <p><strong><%= q.getQuestionText()%></strong></p>
+                        <% for (int i = 0; i < scCount; i++) {%>
+                        <input type="text" name="answer_<%= q.getQuestionId()%>_<%= i%>" placeholder="Your answer"><br/>
+                        <% } %>
                         <% break;
                             }
                             case "MATCHING_HEADINGS": {
@@ -186,8 +174,8 @@
                                     int paragraphCount = paragraphs.length;
                                     List<String> sectionLabels = new ArrayList<>();
                                     for (int i = 0; i < paragraphCount; i++) {
-                                        char label = (char) ('A' + i);
-                                        sectionLabels.add("Section " + label);
+                                        char labelMH = (char) ('A' + i);
+                                        sectionLabels.add("Section " + labelMH);
                                     }
                         %>
                         <div style="border: 1px solid #444; padding: 16px 20px; border-radius: 6px; margin-bottom: 20px; background: #fffaf7;">
@@ -249,6 +237,14 @@
                         <input type="text" name="answer_<%= q.getQuestionId()%>" placeholder="Your answer"><br/>
                         <% } %>
                     </div>
+                    <% if (isSingle) {
+                        questionIndex++;
+                    } else if (isGroup) {
+                        questionIndex += numAnswers;
+                    } else {
+                        questionIndex++;
+                    }
+                    %>
                     <% } %>
                     <% } %>
                 </div>
@@ -271,6 +267,8 @@
             const appContext = "<%= request.getContextPath()%>";
         </script>
         <script src="<%= request.getContextPath()%>/js/doTestReading.js"></script>
+
+
 
     </body>
 </html>  
