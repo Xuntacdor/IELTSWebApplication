@@ -70,11 +70,17 @@
             window.contextPath = '${pageContext.request.contextPath}';
         </script>
         <script src="${pageContext.request.contextPath}/js/FishTank.js"></script>
-        <c:if test="${param.resetSuccess == 'true'}">
-            <script>
-            alert("Your password has been reset successfully. Please log in with your new password.");
-            </script>
-        </c:if>
+    <c:if test="${param.resetSuccess == 'true'}">
+        <script>
+                alert("Your password has been reset successfully. Please log in with your new password.");
+                if (window.history.replaceState) {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('resetSuccess');
+                    window.history.replaceState({}, document.title, url.pathname + url.search);
+                }
+        </script>
+    </c:if>
 
-    </body>
+
+</body>
 </html>

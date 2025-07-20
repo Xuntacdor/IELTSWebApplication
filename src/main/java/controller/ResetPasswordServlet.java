@@ -21,15 +21,6 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "ResetPasswordServlet", urlPatterns = {"/ResetPasswordServlet"})
 public class ResetPasswordServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -61,8 +52,21 @@ public class ResetPasswordServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("reset_email");
 
+        // Kiểm tra khớp mật khẩu
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("View/reset-password.jsp").forward(request, response);
+            return;
+        }
+
+        // ✅ Kiểm tra độ mạnh mật khẩu (đặt ngay đây)
+        if (newPassword.length() < 6
+                || !newPassword.matches(".*[A-Za-z].*")
+                || !newPassword.matches(".*\\d.*")
+                || !newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+
+            request.setAttribute("error",
+                    "Password must be at least 6 characters and include letters, numbers, and special characters.");
             request.getRequestDispatcher("View/reset-password.jsp").forward(request, response);
             return;
         }
@@ -72,13 +76,11 @@ public class ResetPasswordServlet extends HttpServlet {
         if (updated) {
             session.removeAttribute("reset_code");
             session.removeAttribute("reset_email");
-            // Redirect to login page with success message (optional)
             response.sendRedirect("View/Login.jsp?resetSuccess=true");
         } else {
             request.setAttribute("error", "Something went wrong. Please try again.");
             request.getRequestDispatcher("View/reset-password.jsp").forward(request, response);
         }
-
     }
 
     @Override
