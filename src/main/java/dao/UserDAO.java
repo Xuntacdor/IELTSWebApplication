@@ -187,14 +187,14 @@ public class UserDAO {
         return null;
     }
 
-    public static User insertGoogleUser(String email, String fullName, String avatarUrl) {
-        String sql = "INSERT INTO Users (email, full_name, password_hash, avatar_url, role, is_active, cam_balance, is_premium) "
-                + "VALUES (?, ?, ?, ?, 'user', 1, 0, 0)";
+    public static User insertGoogleUser(String email, String fullName) {
+        String sql = "INSERT INTO Users (email, full_name, password_hash, role, is_active, cam_balance, is_premium) "
+                + "VALUES (?, ?, ?, 'user', 1, 0, 0)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, email);
             stmt.setString(2, fullName);
             stmt.setString(3, "GOOGLE_LOGIN"); // đặt giá trị mặc định không dùng
-            stmt.setString(4, avatarUrl);
+            
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
