@@ -57,13 +57,33 @@ function removeGroup(groupId) {
     }
 }
 function changeGroupType(groupId, type) {
-    questionCounts[groupId] = [];
+    // Store current data and question count before clearing
     const container = document.getElementById(`questions-container-${groupId}`);
+    const currentData = {};
+    const currentQuestionCount = questionCounts[groupId] ? questionCounts[groupId].length : 0;
+    
+    console.log(`[changeGroupType] Current question count: ${currentQuestionCount}`);
+    
+    // Save existing question data
+    const existingQuestions = container.querySelectorAll('.question-block');
+    existingQuestions.forEach((questionBlock, index) => {
+        const questionId = questionBlock.id.split('-').pop();
+        currentData[questionId] = {};
+        
+        // Save all input values
+        const inputs = questionBlock.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            if (input.name && input.value) {
+                currentData[questionId][input.name] = input.value;
+            }
+        });
+    });
+    
+    // Clear container but preserve question count
     container.innerHTML = '';
-
+    
     if (type === "MATCHING_HEADINGS") {
-        questionCounts[groupId].push(1);
-
+        questionCounts[groupId] = [1];
         container.innerHTML = `
       <div class="question-block border p-2 position-relative mt-3 bg-light rounded" id="q-${groupId}-1">
         <h6>Matching Headings</h6>
@@ -74,8 +94,42 @@ function changeGroupType(groupId, type) {
         <textarea name="headingMapping_${groupId}" class="form-control" rows="6" placeholder="Section A = iii\nSection B = vi\n..."></textarea>
       </div>`;
     } else {
-        addQuestion(groupId);
+        // Reset question counter to maintain the same number of questions
+        if (!window.nextQuestionId) window.nextQuestionId = {};
+        if (!window.nextQuestionId[groupId]) window.nextQuestionId[groupId] = 1;
+        
+        // Reset to the original count
+        window.nextQuestionId[groupId] = 1;
+        questionCounts[groupId] = [];
+        
+        // Restore the same number of questions
+        for (let i = 0; i < currentQuestionCount; i++) {
+            addQuestion(groupId);
+            // Restore data to the newly created question
+            setTimeout(() => {
+                restoreQuestionData(groupId, i + 1, currentData[i + 1] || {});
+            }, 100);
+        }
+        
+        // If no questions existed, add one default question
+        if (currentQuestionCount === 0) {
+            addQuestion(groupId);
+        }
     }
+    
+    console.log(`[changeGroupType] Restored ${currentQuestionCount} questions`);
+}
+
+function restoreQuestionData(groupId, questionId, data) {
+    const questionBlock = document.getElementById(`q-${groupId}-${questionId}`);
+    if (!questionBlock) return;
+    
+    Object.keys(data).forEach(inputName => {
+        const input = questionBlock.querySelector(`[name="${inputName}"]`);
+        if (input) {
+            input.value = data[inputName];
+        }
+    });
 }
 
 
