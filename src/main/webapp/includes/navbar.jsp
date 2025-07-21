@@ -131,15 +131,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </a>
         </li>
         <li class="menu-item">
-            <a href="${pageContext.request.contextPath}/exam-list?category=READING_FULL">
-                <img src="${pageContext.request.contextPath}/Sources/HomeSource/reading2.png" alt="">
-                <span>Reading (Full Test)</span>
+            <a href="${pageContext.request.contextPath}/View/placement_test.jsp">
+                <span>Placement Test</span>
             </a>
         </li>
         <li class="menu-item">
-            <a href="${pageContext.request.contextPath}/exam-list?category=LISTENING_FULL">
-                <img src="${pageContext.request.contextPath}/Sources/HomeSource/headphone2.png" alt="">
-                <span>Listening (Full Test)</span>
+            <a href="">
+                <span>Study Plan Generator</span>
             </a>
         </li>
         <li class="menu-item"><a href="${pageContext.request.contextPath}/SettingsServlet">Settings</a></li>

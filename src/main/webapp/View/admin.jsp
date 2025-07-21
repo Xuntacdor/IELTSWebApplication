@@ -15,8 +15,12 @@
                 <button name="action" value="addReading" class="admin-btn">➕ Add Reading Test</button>
                 <button name="action" value="addListening" class="admin-btn">🎧 Add Listening Test</button>
             </form>
+            
+            <div class="admin-section">
+                <h3>📊 Quản lý đề thi</h3>
+                <a href="${pageContext.request.contextPath}/admin/exam-management" class="admin-btn-link">📚 View All Exams</a>
+            </div>
             <hr class="divider"/>
-            <a href="${pageContext.request.contextPath}/View/viewExam.jsp" class="view-link">📄 View All Exams</a>
         </div>
     </body>
 </html>

@@ -206,7 +206,6 @@
                 </a>
             </div>
         </div>
-
         <script src="${pageContext.request.contextPath}/js/sakura.js"></script>
     </body>
 </html>

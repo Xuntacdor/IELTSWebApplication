@@ -90,6 +90,35 @@ public class QuestionDAO {
         return list;
     }
 
+    public boolean deleteQuestionsByPassageId(int passageId) {
+        String sql = "DELETE FROM Questions WHERE passage_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, passageId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateQuestion(Question question) {
+        String sql = "UPDATE Questions SET question_text = ?, instruction = ?, explanation = ? WHERE question_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, question.getQuestionText());
+            ps.setString(2, question.getInstruction());
+            ps.setString(3, question.getExplanation());
+            ps.setInt(4, question.getQuestionId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         try {
             ExamDAO examDAO = new ExamDAO();

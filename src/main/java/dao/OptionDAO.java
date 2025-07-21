@@ -88,4 +88,32 @@ public class OptionDAO {
         return map;
     }
 
+    public boolean deleteOptionsByQuestionId(int questionId) {
+        String sql = "DELETE FROM Options WHERE question_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, questionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateOption(Option option) {
+        String sql = "UPDATE Options SET option_text = ?, is_correct = ? WHERE option_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, option.getOptionText());
+            ps.setBoolean(2, option.isCorrect());
+            ps.setInt(3, option.getOptionId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

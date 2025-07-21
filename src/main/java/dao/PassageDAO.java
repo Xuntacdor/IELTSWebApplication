@@ -89,4 +89,34 @@ public class PassageDAO {
         }
         return null;
     }
+
+    public boolean deletePassagesByExamId(int examId) {
+        String sql = "DELETE FROM Passages WHERE exam_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, examId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updatePassage(Passage passage) {
+        String sql = "UPDATE Passages SET title = ?, content = ?, audio_url = ?, section = ? WHERE passage_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, passage.getTitle());
+            ps.setString(2, passage.getContent());
+            ps.setString(3, passage.getAudioUrl());
+            ps.setInt(4, passage.getSection());
+            ps.setInt(5, passage.getPassageId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
