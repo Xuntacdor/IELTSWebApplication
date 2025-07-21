@@ -25,6 +25,7 @@ public class SubmitTestController extends HttpServlet {
 
         int total = 0;
         int correct = 0;
+        List<Map<String, String>> wrongList = new ArrayList<>();
 
         for (Question q : allQuestions) {
             String type = q.getQuestionType();
@@ -51,6 +52,12 @@ public class SubmitTestController extends HttpServlet {
 
                 if (userSet.equals(correctSet)) {
                     correct++;
+                } else {
+                    Map<String, String> wrong = new HashMap<>();
+                    wrong.put("question", q.getQuestionText());
+                    wrong.put("correct", String.join(", ", correctSet));
+                    wrong.put("your", userSet.isEmpty() ? "(Không trả lời)" : String.join(", ", userSet));
+                    wrongList.add(wrong);
                 }
 
             } else if ("SUMMARY_COMPLETION".equals(type)
@@ -64,8 +71,15 @@ public class SubmitTestController extends HttpServlet {
                 for (int i = 0; i < correctAnswers.size(); i++) {
                     String param = "answer_" + qId + "_" + i;
                     String ua = request.getParameter(param);
-                    if (ua != null && ua.trim().equalsIgnoreCase(correctAnswers.get(i).getAnswerText().trim())) {
+                    String correctAns = correctAnswers.get(i).getAnswerText().trim();
+                    if (ua != null && ua.trim().equalsIgnoreCase(correctAns)) {
                         correct++;
+                    } else {
+                        Map<String, String> wrong = new HashMap<>();
+                        wrong.put("question", q.getQuestionText() + " (" + (i+1) + ")");
+                        wrong.put("correct", correctAns);
+                        wrong.put("your", (ua == null || ua.trim().isEmpty()) ? "(Không trả lời)" : ua.trim());
+                        wrongList.add(wrong);
                     }
                 }
 
@@ -75,12 +89,20 @@ public class SubmitTestController extends HttpServlet {
                 total++;
                 String ua = request.getParameter("answer_" + qId);
                 List<Answer> correctAnswers = answerDAO.getCorrectAnswersByQuestionId(qId);
-
+                boolean found = false;
                 for (Answer a : correctAnswers) {
                     if (ua != null && a.getAnswerText().equalsIgnoreCase(ua.trim())) {
                         correct++;
+                        found = true;
                         break;
                     }
+                }
+                if (!found) {
+                    Map<String, String> wrong = new HashMap<>();
+                    wrong.put("question", q.getQuestionText());
+                    wrong.put("correct", correctAnswers.isEmpty() ? "" : correctAnswers.get(0).getAnswerText());
+                    wrong.put("your", (ua == null || ua.trim().isEmpty()) ? "(Không trả lời)" : ua.trim());
+                    wrongList.add(wrong);
                 }
 
             } else if ("MATCHING_HEADINGS".equals(type)) {
@@ -92,8 +114,15 @@ public class SubmitTestController extends HttpServlet {
                 for (int i = 0; i < count; i++) {
                     String param = "answer_" + qId + "_" + i;
                     String ua = request.getParameter(param);
-                    if (ua != null && ua.trim().equalsIgnoreCase(correctAnswers.get(i).getAnswerText().trim())) {
+                    String correctAns = correctAnswers.get(i).getAnswerText().trim();
+                    if (ua != null && ua.trim().equalsIgnoreCase(correctAns)) {
                         correct++;
+                    } else {
+                        Map<String, String> wrong = new HashMap<>();
+                        wrong.put("question", q.getQuestionText() + " (" + (i+1) + ")");
+                        wrong.put("correct", correctAns);
+                        wrong.put("your", (ua == null || ua.trim().isEmpty()) ? "(Không trả lời)" : ua.trim());
+                        wrongList.add(wrong);
                     }
                 }
 
@@ -101,16 +130,23 @@ public class SubmitTestController extends HttpServlet {
                 // Default 1-answer (short answer)
                 total++;
                 String ua = request.getParameter("answer_" + qId);
-                if (ua == null || ua.trim().isEmpty()) {
-                    continue;
-                }
-
                 List<Answer> correctAnswers = answerDAO.getCorrectAnswersByQuestionId(qId);
-                for (Answer a : correctAnswers) {
-                    if (a.getAnswerText().equalsIgnoreCase(ua.trim())) {
-                        correct++;
-                        break;
+                boolean found = false;
+                if (ua != null && !ua.trim().isEmpty()) {
+                    for (Answer a : correctAnswers) {
+                        if (a.getAnswerText().equalsIgnoreCase(ua.trim())) {
+                            correct++;
+                            found = true;
+                            break;
+                        }
                     }
+                }
+                if (!found) {
+                    Map<String, String> wrong = new HashMap<>();
+                    wrong.put("question", q.getQuestionText());
+                    wrong.put("correct", correctAnswers.isEmpty() ? "" : correctAnswers.get(0).getAnswerText());
+                    wrong.put("your", (ua == null || ua.trim().isEmpty()) ? "(Không trả lời)" : ua.trim());
+                    wrongList.add(wrong);
                 }
             }
         }
@@ -132,6 +168,7 @@ public class SubmitTestController extends HttpServlet {
         request.setAttribute("correct", correct);
         request.setAttribute("total", total);
         request.setAttribute("score", score);
+        request.setAttribute("wrongList", wrongList);
         request.getRequestDispatcher("./View/result.jsp").forward(request, response);
     }
 }

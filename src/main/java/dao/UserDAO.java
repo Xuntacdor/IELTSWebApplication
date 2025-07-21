@@ -194,8 +194,8 @@ public class UserDAO {
             stmt.setString(1, email);
             stmt.setString(2, fullName);
             stmt.setString(3, "GOOGLE_LOGIN"); // đặt giá trị mặc định không dùng
+            
             stmt.setString(4, avatarUrl);
-
             int rows = stmt.executeUpdate();
             if (rows > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
