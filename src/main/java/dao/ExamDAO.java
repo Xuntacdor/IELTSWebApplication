@@ -172,6 +172,34 @@ public class ExamDAO {
         return types;
     }
 
+    public boolean deleteExam(int examId) {
+        String sql = "DELETE FROM Exams WHERE exam_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, examId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateExam(Exam exam) {
+        String sql = "UPDATE Exams SET title = ?, type = ? WHERE exam_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, exam.getTitle());
+            ps.setString(2, exam.getType());
+            ps.setInt(3, exam.getExamId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         ExamDAO dao = new ExamDAO();
 

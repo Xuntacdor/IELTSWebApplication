@@ -28,7 +28,6 @@ body::before {
     z-index: -1;
 }
 
-/* ==== HEADER STYLES ==== */
 .test-header {
     position: fixed;
     top: 0;
@@ -286,7 +285,7 @@ body.font-large .section-description {
     font-size: 18px;
 }
 
-/* Adjust section content for header */
+
 .section-content {
     justify-content: center;
     align-items: flex-start;
@@ -296,6 +295,7 @@ body.font-large .section-description {
     padding: 0;
     margin: 0;
     margin-top: 90px; /* Add space for header */
+
 }
 
 .right-panel {
@@ -667,4 +667,5 @@ body.font-large .section-description {
   opacity: 1 !important;
   visibility: visible !important;
   background: none !important;
+
 } 

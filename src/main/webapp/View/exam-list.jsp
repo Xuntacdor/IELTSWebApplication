@@ -67,7 +67,8 @@
     <body>
         <div class="background-noise-layer"></div>
 
-        <div class="container-fluid home_container">
+
+        <div class="container-fluid home_container marginn">
             <jsp:include page="/includes/navbar.jsp" />
 
             <div class="col-md-9 exam-part">

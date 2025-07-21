@@ -135,6 +135,34 @@ public class AnswerDAO {
         return map;
     }
 
+    public boolean deleteAnswersByQuestionId(int questionId) {
+        String sql = "DELETE FROM Answers WHERE question_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, questionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateAnswer(Answer answer) {
+        String sql = "UPDATE Answers SET answer_text = ?, is_correct = ? WHERE answer_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, answer.getAnswerText());
+            ps.setBoolean(2, answer.isCorrect());
+            ps.setInt(3, answer.getAnswerId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         AnswerDAO dao = new AnswerDAO();
         Answer a = new Answer(40, "Sample Answer A");

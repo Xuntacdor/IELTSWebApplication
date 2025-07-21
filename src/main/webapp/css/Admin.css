@@ -148,6 +148,58 @@ h2 {
     width: 100%;
 }
 
+.admin-section {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.admin-section h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 8px #7F55B1aa;
+}
+
+.admin-btn-link {
+    display: inline-block;
+    padding: 16px 24px;
+    background: linear-gradient(90deg, #fff 60%, #FCECEC 100%);
+    color: #7F55B1;
+    font-weight: bold;
+    font-size: 17px;
+    text-decoration: none;
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px 0 #7F55B155;
+    transition: box-shadow 0.3s, color 0.3s, background 0.3s;
+    outline: none;
+}
+
+.admin-btn-link:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(127,85,177,0.15);
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+    z-index: 0;
+}
+
+.admin-btn-link:hover {
+    background: linear-gradient(90deg, #E4A4AF 60%, #7F55B1 100%);
+    color: #fff;
+    box-shadow: 0 4px 24px 0 #FCECEC99, 0 0 8px #fff;
+    border: 1.5px solid #fff;
+    text-decoration: none;
+}
+
 @media (max-width: 600px) {
     .container {
         width: 98%;

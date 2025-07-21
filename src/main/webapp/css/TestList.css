@@ -15,7 +15,10 @@ body {
       padding:0;
       
 }
-
+.marginn{
+    margin:0;
+    padding:0;
+}
 
 .background-noise-layer {
     position: fixed;

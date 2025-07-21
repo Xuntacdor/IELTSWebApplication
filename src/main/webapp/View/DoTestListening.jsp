@@ -55,6 +55,9 @@
             </div>
         </header>
 
+    </head>
+    <body>
+
         <%
             int examId = Integer.parseInt(request.getParameter("examId"));
             Exam exam = (Exam) request.getAttribute("exam");
@@ -115,6 +118,54 @@
                     Vui lòng quay lại và chọn đề thi hợp lệ.
                 </div>
             <% } %>
+
+        <form action="${pageContext.request.contextPath}/SubmitTestServlet" method="post">
+            <input type="hidden" name="examId" value="${param.examId}" />
+            <div class="section-content" style="gap: 40px;">
+
+                <div class="right-panel">
+                    <div class="section-info" style="display:block;">
+                        <div class="section-title">Section 1</div>
+                        <div class="section-description">${passages[0].title}</div>
+                    </div>
+                    <h4>🔍 Questions for Section 1</h4>
+                    <c:set var="questions" value="${passageQuestions[passages[0].passageId]}" />
+                    <c:if test="${not empty questions}">
+                        <c:forEach var="q" items="${questions}" varStatus="status">
+                            <c:set var="qId" value="${q.questionId}" />
+                            <div class="question-box">
+                                <p><strong>${q.questionText}</strong></p>
+                                <input type="text" name="answer_${qId}" class="completion-input" placeholder="Your answer">
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <button type="button" class="play-btn" onclick="togglePlay(this, '${passages[0].audioUrl}')">▶️</button>
+                            <div class="progress-bar" onclick="seekAudio(event, this)">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <div class="time-display">
+                                <span class="current-time">0:00</span> / <span class="total-time">0:00</span>
+                            </div>
+                        </div>
+                        <div class="volume-control">
+                            <span>🔊</span>
+                            <input type="range" class="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+                        </div>
+                        <div class="speed-control" style="margin-top: 10px;">
+                            <label for="audioSpeed">Speed:</label>
+                            <select id="audioSpeed" onchange="setAudioSpeed(this.value)">
+                                <option value="0.75">0.75x</option>
+                                <option value="1" selected>1x</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="2.0">2.0x</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div style="text-align:center; margin-top: 20px;">
                 <input type="submit" value="Submit Listening Test" class="btn-submit" />
             </div>
@@ -178,6 +229,8 @@
                 }
             });
             
+
+        <script>
             let currentAudioElement = null;
             let currentProgressBar = null;
             let currentTimeDisplay = null;
