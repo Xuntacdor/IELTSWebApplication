@@ -93,6 +93,11 @@ body::before {
     font-size: 17px;
     color: #2d3748;
     font-weight: 400;
+    .passage-text {
+    cursor: text;
+    user-select: text;
+}
+
 }
 
 .passage-text::selection {
@@ -557,4 +562,14 @@ html {
 .section-btn:hover {
     background: linear-gradient(135deg, #ff9a56, #ff6b6b);
     color: white;
+}
+.tool-btn.active {
+    background-color: #ff9a56;
+    color: white;
+    font-weight: bold;
+}
+.question-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
 }
