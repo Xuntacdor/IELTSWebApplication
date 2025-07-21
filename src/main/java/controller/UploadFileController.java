@@ -7,7 +7,7 @@ import jakarta.servlet.http.*;
 import java.io.*;
 
 @WebServlet("/uploads/*")
-public class ImageController extends HttpServlet {
+public class UploadFileController extends HttpServlet {
     private static final String IMAGE_DIR = "C:/IELTS_Uploads/";
 
     @Override

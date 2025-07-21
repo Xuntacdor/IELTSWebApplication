@@ -22,31 +22,35 @@ public class DoTestServlet extends HttpServlet {
                 resp.sendRedirect("View/error.jsp?msg=Invalid examId");
                 return;
             }
+
             int examId = Integer.parseInt(examIdRaw);
 
-            // Load DAOs
+            // DAO instances
             ExamDAO examDAO = new ExamDAO();
             PassageDAO passageDAO = new PassageDAO();
             QuestionDAO questionDAO = new QuestionDAO();
             OptionDAO optionDAO = new OptionDAO();
             AnswerDAO answerDAO = new AnswerDAO();
 
+            // Load exam
             Exam exam = examDAO.getExamById(examId);
             if (exam == null) {
                 resp.sendRedirect("View/error.jsp?msg=Exam not found");
                 return;
             }
 
+            // Load passages
             List<Passage> passages = passageDAO.getPassagesByExamId(examId);
             passages.sort(Comparator.comparingInt(Passage::getSection));
 
+            // Load questions, options, answers
             Map<Integer, List<Question>> passageQuestions = new HashMap<>();
             Map<Integer, List<Option>> questionOptions = new HashMap<>();
             Map<Integer, List<Answer>> questionAnswers = new HashMap<>();
 
-            for (Passage p : passages) {
-                List<Question> questions = questionDAO.getQuestionsByPassageId(p.getPassageId());
-                passageQuestions.put(p.getPassageId(), questions);
+            for (Passage passage : passages) {
+                List<Question> questions = questionDAO.getQuestionsByPassageId(passage.getPassageId());
+                passageQuestions.put(passage.getPassageId(), questions);
 
                 for (Question q : questions) {
                     int qId = q.getQuestionId();
@@ -55,15 +59,15 @@ public class DoTestServlet extends HttpServlet {
                 }
             }
 
-            // Gán dữ liệu cho JSP
+            // Set attributes
             req.setAttribute("exam", exam);
             req.setAttribute("passages", passages);
             req.setAttribute("passageQuestions", passageQuestions);
             req.setAttribute("questionOptions", questionOptions);
             req.setAttribute("questionAnswers", questionAnswers);
 
-            // Chuyển tới trang hiển thị phù hợp
-            String type = exam.getType().toUpperCase();
+            // Redirect to proper JSP
+            String type = exam.getType().toUpperCase(); // e.g., LISTENING_FULL
             String jspPath = type.contains("LISTENING")
                     ? "/View/DoTestListening.jsp"
                     : "/View/DoTestReading.jsp";
@@ -78,13 +82,13 @@ public class DoTestServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        doGet(request, response);
+        doGet(req, resp); // handle POST the same way
     }
 
     @Override
     public String getServletInfo() {
-        return "DoTestServlet: Load and render IELTS test based on examId";
+        return "DoTestServlet: Load and render IELTS test (Reading/Listening) by examId";
     }
 }

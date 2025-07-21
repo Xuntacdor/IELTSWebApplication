@@ -9,9 +9,10 @@ import java.net.URL;
 
 public class GoogleUtils {
 
-    private static final String CLIENT_ID = "thay code vao";
-    private static final String CLIENT_SECRET = "thay code vao"; // <-- Thay đúng secret
-    private static final String REDIRECT_URI = "thay code vao";
+
+    private static final String CLIENT_ID = "";
+    private static final String CLIENT_SECRET = ""; // <-- Thay đúng secret
+    private static final String REDIRECT_URI = "";
 
     public static String getToken(String code) throws IOException {
         String url = "https://oauth2.googleapis.com/token";

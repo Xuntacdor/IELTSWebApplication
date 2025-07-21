@@ -14,7 +14,7 @@ import jakarta.servlet.http.*;
 
 @WebServlet(name = "AddExamServlet", urlPatterns = {"/AddExamServlet"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024)
-public class AddExamController extends HttpServlet {
+public class AddReadingTestController extends HttpServlet {
 
     private final ExamDAO examDAO = new ExamDAO();
     private final PassageDAO passageDAO = new PassageDAO();

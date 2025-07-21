@@ -2,21 +2,19 @@ package controller;
 
 import dao.*;
 import model.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.UUID;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Timestamp;
-
-@WebServlet(name = "AddListeningTestServlet", urlPatterns = {"/AddListeningTestServlet"})
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024,
-        maxFileSize = 50 * 1024 * 1024,
-        maxRequestSize = 100 * 1024 * 1024
-)
+@WebServlet(name = "AddListeningTestController", urlPatterns = {"/AddListeningTestController"})
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 10 * 1024 * 1024)
 public class AddListeningTestController extends HttpServlet {
 
     private final ExamDAO examDAO = new ExamDAO();
@@ -28,121 +26,199 @@ public class AddListeningTestController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
+        // Log toàn bộ param nhận được
+        System.out.println("---- All request params ----");
+        request.getParameterMap().forEach((k, v) -> System.out.println(k + " = " + java.util.Arrays.toString(v)));
+        System.out.println("---------------------------");
+        try {
+            String examTitle = request.getParameter("examTitle");
+            String examType = request.getParameter("category");
+            if (isEmpty(examTitle) || isEmpty(examType)) {
+                System.out.println("[ERR] Missing exam info");
+                response.sendRedirect("View/addListeningTest.jsp?error=MissingExamInfo");
+                return;
+            }
+            Exam exam = new Exam();
+            exam.setTitle(examTitle.trim());
+            exam.setType(examType);
+            exam.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            int examId = examDAO.insertExam(exam);
+            System.out.println("[OK] Exam inserted: " + examId);
+            String audioUrl = request.getParameter("examAudioPath");
+            if (isEmpty(audioUrl)) {
+                System.out.println("[ERR] No audio file selected");
+                response.sendRedirect("View/addListeningTest.jsp?error=NoAudioSelected");
+                return;
+            }
+            if ("LISTENING_FULL".equals(examType)) {
+                processSections(examId, audioUrl, request, true);
+            } else {
+                processSections(examId, audioUrl, request, false);
+            }
+            response.sendRedirect("View/addSuccess.jsp");
+        } catch (Exception e) {
+            System.out.println("[ERR] Exception: " + e.getMessage());
+            e.printStackTrace();
+            response.sendRedirect("View/addListeningTest.jsp?error=InternalError");
+        }
+    }
 
-        String examTitle = request.getParameter("examTitle");
-        Part audioPart = request.getPart("fullAudio");
+    private void processSections(int examId, String audioUrl, HttpServletRequest request, boolean isFull) throws Exception {
+        int maxSections = isFull ? 4 : 1;
+        for (int sectionIdx = 1; sectionIdx <= maxSections; sectionIdx++) {
+            String sectionTitle = request.getParameter(isFull ? ("sectionTitle" + sectionIdx) : "sectionTitle");
+            if (isEmpty(sectionTitle)) continue;
+            Passage passage = new Passage();
+            passage.setExamId(examId);
+            passage.setSection(sectionIdx);
+            passage.setTitle(sectionTitle.trim());
+            passage.setType("LISTENING");
+            passage.setContent("");
+            passage.setAudioUrl(audioUrl);
+            passage.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            int passageId = passageDAO.insertPassage(passage);
+            System.out.println("[OK] Section " + sectionIdx + " inserted: " + passageId);
+            processGroups(passageId, sectionIdx, request, isFull);
+            if (!isFull) break;
+        }
+    }
 
-        if (examTitle == null || examTitle.trim().isEmpty()) {
-            response.sendRedirect("addListeningTest.jsp?error=missingTitle");
+    private void processGroups(int passageId, int sectionIdx, HttpServletRequest request, boolean isFull) throws Exception {
+        for (int groupId = 1; groupId <= 100; groupId++) {
+            String groupType = request.getParameter((isFull ? ("groupType_" + sectionIdx + "_") : "groupType_") + groupId);
+            if (isEmpty(groupType)) continue;
+            String groupInstruction = request.getParameter((isFull ? ("groupInstruction_" + sectionIdx + "_") : "groupInstruction_") + groupId);
+            String imageUrl = uploadImageByGroup(request, sectionIdx, groupId, isFull);
+            System.out.println("[OK] Group " + groupId + " type=" + groupType);
+            processQuestions(passageId, groupType, groupInstruction, imageUrl, sectionIdx, groupId, request, isFull);
+        }
+    }
+
+    private void processQuestions(int passageId, String groupType, String groupInstruction, String imageUrl,
+                                  int sectionIdx, int groupId, HttpServletRequest request, boolean isFull) throws Exception {
+        for (int q = 1; q <= 100; q++) {
+            String prefix = (isFull ? sectionIdx + "_" : "");
+            String questionText = request.getParameter("q_" + prefix + groupId + "_" + q);
+            if (isEmpty(questionText)) continue;
+            Question question = new Question();
+            question.setPassageId(passageId);
+            question.setQuestionType(groupType);
+            question.setInstruction(groupInstruction != null ? groupInstruction.trim() : "");
+            question.setImageUrl(imageUrl);
+            question.setNumberInPassage(-1);
+            question.setExplanation("");
+            question.setQuestionText(questionText.trim());
+            int questionId = questionDAO.insertQuestion(question);
+            System.out.println("[OK] Q" + q + " inserted: " + questionId);
+            insertAnswersAndOptions(groupType, sectionIdx, groupId, q, questionId, request, isFull);
+        }
+    }
+
+    private String uploadImageByGroup(HttpServletRequest request, int sectionIdx, int groupId, boolean isFull) throws IOException, ServletException {
+        String partName = (isFull ? ("groupImage_" + sectionIdx + "_") : "groupImage_") + groupId;
+        for (Part part : request.getParts()) {
+            if (part.getName().equals(partName) && part.getSize() > 0) {
+                String fileName = part.getSubmittedFileName();
+                if (!isEmpty(fileName)) {
+                    String ext = fileName.substring(fileName.lastIndexOf("."));
+                    String uniqueFileName = (isFull ? ("group_" + sectionIdx + "_") : "group_single_") + groupId + "_" + java.util.UUID.randomUUID() + ext;
+                    String uploadPath = getServletContext().getRealPath("/uploads/images/");
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) uploadDir.mkdirs();
+                    File file = new File(uploadPath + uniqueFileName);
+                    part.write(file.getAbsolutePath());
+                    return "uploads/images/" + uniqueFileName;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void insertAnswersAndOptions(String type, int sectionIdx, int groupId, int q, int questionId, HttpServletRequest request, boolean isFull) {
+        try {
+            switch (type) {
+                case "MULTIPLE_CHOICE":
+                    insertMultipleChoiceAnswers(sectionIdx, groupId, q, questionId, request, isFull);
+                    break;
+                case "MATCHING":
+                    insertMatchingAnswers(sectionIdx, groupId, q, questionId, request, isFull);
+                    break;
+                case "SUMMARY_COMPLETION":
+                case "TABLE_COMPLETION":
+                case "FLOWCHART":
+                case "FORM_COMPLETION":
+                case "NOTE_COMPLETION":
+                case "MAP_LABELING":
+                case "PLAN_LABELING":
+                case "DIAGRAM_LABELING":
+                case "SENTENCE_COMPLETION":
+                    insertCompletionAnswers(sectionIdx, groupId, q, questionId, request, isFull);
+                    break;
+                default:
+                    System.out.println("[ERR] Unknown question type: " + type);
+            }
+        } catch (Exception e) {
+            System.out.println("[ERR] Insert answer: " + e.getMessage());
+        }
+    }
+
+    private void insertMultipleChoiceAnswers(int sectionIdx, int groupId, int q, int questionId, HttpServletRequest request, boolean isFull) {
+        for (int i = 0; i < 10; i++) {
+            String prefix = (isFull ? sectionIdx + "_" : "");
+            String paramName = "a_" + prefix + groupId + "_" + q + "_" + i;
+                String optText = request.getParameter(paramName);
+            if (isEmpty(optText)) continue;
+            String correctParam = "correct_" + prefix + groupId + "_" + q + "_" + i;
+            boolean isCorrect = request.getParameter(correctParam) != null;
+                Answer answer = new Answer();
+                answer.setQuestionId(questionId);
+                answer.setAnswerText(optText.trim());
+                answer.setCorrect(isCorrect);
+            answerDAO.insertAnswer(answer);
+        }
+    }
+
+    private void insertMatchingAnswers(int sectionIdx, int groupId, int q, int questionId, HttpServletRequest request, boolean isFull) {
+        for (int i = 0; i < 20; i++) {
+            String prefix = (isFull ? sectionIdx + "_" : "");
+            String left = request.getParameter("matchQ_" + prefix + groupId + "_" + q + "_" + i);
+            String right = request.getParameter("matchA_" + prefix + groupId + "_" + q + "_" + i);
+            if (isEmpty(left) || isEmpty(right)) continue;
+                    Answer pair = new Answer();
+                    pair.setQuestionId(questionId);
+                    pair.setAnswerText(left.trim() + " = " + right.trim());
+                    pair.setCorrect(true);
+            answerDAO.insertAnswer(pair);
+        }
+    }
+
+    private void insertCompletionAnswers(int sectionIdx, int groupId, int q, int questionId, HttpServletRequest request, boolean isFull) {
+        String prefix = (isFull ? sectionIdx + "_" : "");
+        String answerText = request.getParameter("shortA_" + prefix + groupId + "_" + q);
+        if (!isEmpty(answerText)) {
+                Answer answer = new Answer();
+                answer.setQuestionId(questionId);
+                answer.setAnswerText(answerText.trim());
+                answer.setCorrect(true);
+            answerDAO.insertAnswer(answer);
             return;
         }
-
-        // ✅ Lưu audio
-        String audioUrl = "";
-        if (audioPart != null && audioPart.getSize() > 0) {
-            String fileName = System.currentTimeMillis() + "_" + audioPart.getSubmittedFileName();
-            String uploadPath = getServletContext().getRealPath("/uploads/audio");
-            File dir = new File(uploadPath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            audioPart.write(uploadPath + File.separator + fileName);
-            audioUrl = "uploads/audio/" + fileName;
-        }
-
-        // ✅ Tạo Exam
-        Exam exam = new Exam();
-        exam.setTitle(examTitle);
-        exam.setType("LISTENING");
-        exam.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        int examId = examDAO.insertExam(exam);
-
-        // ✅ Duyệt từng Section
-        for (int s = 1;; s++) {
-            String sectionTitle = request.getParameter("sectionTitle" + s);
-            String sectionContent = request.getParameter("sectionContent" + s);
-            if (sectionTitle == null && sectionContent == null) {
-                break;
-            }
-
-            Passage passage = new Passage();
-            passage.setTitle(sectionTitle);
-            passage.setContent(sectionContent);
-            passage.setType("LISTENING");
-            passage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            passage.setExamId(examId);
-            passage.setAudioUrl(audioUrl);
-            int passageId = passageDAO.insertPassage(passage);
-
-            for (int q = 1;; q++) {
-                String questionType = request.getParameter("type_s" + s + "_q" + q);
-                if (questionType == null) {
-                    break;
-                }
-
-                String instruction = request.getParameter("instruction_s" + s + "_q" + q);
-                Part imagePart = request.getPart("image_s" + s + "_q" + q);
-
-                String imageUrl = "";
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    String rawName = imagePart.getSubmittedFileName();
-                    String fileName = "listen_s" + s + "_q" + q + "_" + System.currentTimeMillis() + "_" + rawName.replaceAll("\\s+", "_");
-                    String uploadPath = getServletContext().getRealPath("/uploads");
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
-                    imagePart.write(uploadPath + File.separator + fileName);
-                    imageUrl = "uploads/" + fileName;
-                }
-
-                int questionId = -1;
-
-                for (int i = 0;; i++) {
-                    String questionText = request.getParameter("questionText_s" + s + "_q" + q + "_i" + i);
-                    String answerText = request.getParameter("answers_s" + s + "_q" + q + "_i" + i);
-                    String isCorrectParam = request.getParameter("isCorrect_s" + s + "_q" + q + "_i" + i);
-
-                    if (questionText == null && answerText == null) {
+        String[] altParams = {"completionA_", "labelA_", "fillA_", "sentenceA_"};
+        for (String alt : altParams) {
+            String altAnswer = request.getParameter(alt + prefix + groupId + "_" + q);
+            if (!isEmpty(altAnswer)) {
+                Answer answer = new Answer();
+                answer.setQuestionId(questionId);
+                answer.setAnswerText(altAnswer.trim());
+                answer.setCorrect(true);
+                answerDAO.insertAnswer(answer);
                         break;
-                    }
-
-                    boolean shouldCreateQuestion = questionId == -1 && ((questionText != null && !questionText.trim().isEmpty())
-                            || (!imageUrl.isEmpty() && answerText != null && !answerText.trim().isEmpty()));
-
-                    if (shouldCreateQuestion) {
-                        Question question = new Question();
-                        question.setPassageId(passageId);
-                        question.setQuestionType(questionType);
-                        question.setInstruction(instruction);
-                        question.setQuestionText(questionText != null ? questionText.trim() : "");
-                        question.setExplanation("");
-                        question.setNumberInPassage(-1);
-                        question.setImageUrl(imageUrl);
-                        questionId = questionDAO.insertQuestion(question);
-                    }
-
-                    if (questionId != -1 && answerText != null && !answerText.trim().isEmpty()) {
-                        if ("MULTIPLE_CHOICE".equals(questionType)) {
-                            Option option = new Option();
-                            option.setQuestionId(questionId);
-                            option.setOptionLabel(String.valueOf((char) ('A' + i))); // A, B, C...
-                            option.setOptionText(answerText.trim());
-                            option.setIsCorrect(isCorrectParam != null);
-                            optionDAO.insertOption(option);
-                        } else {
-                            Answer answer = new Answer();
-                            answer.setQuestionId(questionId);
-                            answer.setAnswerText(answerText.trim());
-                            answerDAO.insertAnswer(answer);
-                        }
-                    }
-                }
             }
         }
+    }
 
-        response.sendRedirect("addSuccess.jsp");
+    private boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

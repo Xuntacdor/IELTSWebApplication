@@ -5,11 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a580a9a5-97a1-484c-b5c4-10463312d7a1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/AddExamController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/AddExamController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dao/PassageDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/PassageDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dao/QuestionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/QuestionDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/View/DoTestReading.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/View/DoTestReading.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/form-script.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/form-script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/AddListeningTestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/AddListeningTestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/AddReadingTestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/AddReadingTestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/DoTestServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/DoTestServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/UploadFileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/UploadFileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/DBConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/EmailUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/EmailUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/GoogleUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/GoogleUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/View/addListeningTest.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/View/addListeningTest.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/View/exam-list.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/View/exam-list.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/SignUp.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/SignUp.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/form-listening.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/form-listening.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,26 +27,26 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2zXmOUHVWm6qeO5tvu1jIOq3Ftq" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/hmqua/OneDrive/Documents/NetBeansProjects/IELTSWebApplication",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hmqua/OneDrive/Documents/NetBeansProjects/IELTSWebApplication&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="a580a9a5-97a1-484c-b5c4-10463312d7a1" name="Changes" comment="" />
