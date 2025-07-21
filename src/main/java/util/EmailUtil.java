@@ -6,8 +6,8 @@ import jakarta.mail.internet.*;
 
 public class EmailUtil {
     public static void sendEmail(String toEmail, String subject, String body) {
-        final String fromEmail = "nhatquang1223@gmail.com"; // Gmail của bạn
-        final String password = "mavk mlax jmbf wbdh";     // Mật khẩu ứng dụng (không phải mật khẩu Gmail)
+        final String fromEmail = ""; // Gmail của bạn
+        final String password = "";    
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com"); // SMTP host
